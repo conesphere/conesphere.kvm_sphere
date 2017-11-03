@@ -1,0 +1,12 @@
+#!/bin/bash
+if [[ ! -S /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S ]]
+then
+	echo Image is not running, cant access vm monitor 
+	exit 1
+fi
+echo system_powerdown | socat /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S stdin
+while [[ -S /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S ]]
+do
+	echo waiting for {{ kvm_machine.name }} to power down.
+	sleep 1
+done

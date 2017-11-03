@@ -1,0 +1,38 @@
+#!/bin/bash
+if [[ ! -d "/tmp/{{ kvm_machine.name }}-kvm" ]]
+then
+	umask 077
+	mkdir "/tmp/{{ kvm_machine.name }}-kvm" || exit $?
+	umask 022
+fi
+
+if [[ $(stat -c %a /tmp/{{ kvm_machine.name }}-kvm) != "700" ]]
+then  
+	echo  /tmp/{{ kvm_machine.name }}-kvm has insecure permissions
+	exit 3
+fi
+
+if [[ $(stat -c %G /tmp/{{ kvm_machine.name }}-kvm) != "{{ kvm_machine.name }}" ]]
+then  
+	echo  /tmp/{{ kvm_machine.name }}-kvm has insecure permissions
+	exit 4
+fi
+
+if [[ $(stat -c %U /tmp/{{ kvm_machine.name }}-kvm) != "{{ kvm_machine.name }}" ]]
+then  
+	echo  /tmp/{{ kvm_machine.name }}-kvm has insecure permissions
+	exit 5
+fi
+
+if [[ -S /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S ]]
+then
+	echo There is a monitor socket file there, pse check fo another qemu instance 1st
+	exit 2
+fi
+
+while [[ ! -f {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.image_ready ]]
+do
+	echo Image is not yet ready we waiting for image
+	sleep 30
+done
+qemu-system-x86_64 -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.conf -daemonize

@@ -1,0 +1,30 @@
+---
+# test if kvm machine needs to be set up or shut down here
+#- include: drop_kvm_image.yml
+#  when: 
+- group:
+    name: "{{ kvm_machine.name }}"
+    gid: "{{ kvm_machine.gid|default(kvm_machine.uid) }}"
+    state: "present"
+- user:
+    name: "{{ kvm_machine.name }}"
+    group: "{{ kvm_machine.name }}"
+    uid: "{{ kvm_machine.uid }}"
+    groups: kvm
+    state: "present"
+    createhome: "yes"
+    shell: "/bin/bash"
+    home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
+    update_password: always
+- file:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
+   state: directory
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0750"
+- include: host_unknown.yml
+  when: "inventory_hostname not in kvm_machine.deploy_to"
+- include: drop_kvm_image.yml
+  when: kvm_machine.deploy_to[inventory_hostname] == "drop"
+- include: create_kvm_image.yml
+  when: kvm_machine.deploy_to[inventory_hostname] == "start"

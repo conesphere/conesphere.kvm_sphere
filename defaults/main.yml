@@ -1,0 +1,9 @@
+---
+# defaults file for conesphere.kvm.manager
+kvm_image_root: "/var/vmimages"
+# use list of all bridge interfaces from network 
+# config by default
+kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
+
+# empty default for kvm machines 
+kvm_machines: []

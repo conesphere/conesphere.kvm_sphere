@@ -1,0 +1,19 @@
+[Unit]
+Description=QEMU KVM {{ kvm_machine.name }} boot kvm
+After=network.target auditd.service
+Requires=vm-{{ kvm_machine.name }}-image.service
+ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled
+PartOf=vm-{{ kvm_machine.name }}.service
+
+[Service]
+ExecStart={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-start.sh
+ExecStop={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-stop.sh
+User={{ kvm_machine.name }}
+Group={{ kvm_machine.name }}
+KillMode=process
+Restart=on-failure
+RestartSec=60s
+TimeoutStopSec=60s
+TimeoutStartSec=infinity
+Type=forking
+

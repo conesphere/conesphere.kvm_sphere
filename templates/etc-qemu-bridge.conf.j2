@@ -1,0 +1,3 @@
+{% for iface in kvm_allowed_bridge_if %}
+allow {{ iface.name|default(iface) }}
+{% endfor %}

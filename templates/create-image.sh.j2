@@ -1,0 +1,74 @@
+#!/bin/bash
+
+c=100
+while [[ ! -d "{{ kvm_image_root }}/{{ kvm_machine.name }}" ]]
+do
+	# this loop should never be active because this script is located in the 
+	# same users home we are testing for
+	c=$((${c}-1))
+	if [[ "${c}" == "0" ]]
+	then
+		echo "no operating directory, timeout reached, terminating"
+		exit 1
+	fi
+	echo "we can't do nothing because our operating directory is not there yet"
+	sleep 10
+done
+
+cd "{{ kvm_image_root }}/{{ kvm_machine.name }}" || exit $?
+
+if [[ -f {{ kvm_machine.name }}.status.image_ready ]]
+then
+	echo "Image was set up successfully already, nothing to do"
+	exit 0
+fi
+
+if [[ -f "/tmp/{{ kvm_machine.name }}.status.vmdebootsrap.running" ]]
+then
+	echo "There is another vmdebootstrap running"
+	echo "Maybe you just need to delete /tmp/{{ kvm_machine.name }}.status.vmdebootsrap.running"
+	exit 1
+else
+	touch "/tmp/{{ kvm_machine.name }}.status.vmdebootsrap.running"
+fi
+
+RET=23
+
+while [[ ${RET} != 0 ]]
+do
+	if [[ -f {{ kvm_machine.name }}.img ]]
+	then
+		mv {{ kvm_machine.name }}.img {{ kvm_machine.name }}.img.create-image-save || exit $?
+	fi
+	
+	# this is where actually work happens, the rest is signalling 
+	vmdebootstrap \
+	  "--distribution={{ kvm_machine.os_version }}" \
+	  "--arch={{ kvm_machine.arch|default('amd64') }}" \
+	  "--image={{ kvm_machine.name }}.img" \
+	  "--grub" \
+	  "--size={{ kvm_machine.disk }}" \
+	  "--log={{ kvm_image_root }}/{{ kvm_machine.name }}/vmdebootstrap.log" \
+	  "--lock-root-password" \
+	  "--roottype=btrfs" \
+	  "--package=python" \
+	  "--package=openssh-server" \
+	  "--package=acpid" \
+	  "--package=net-tools" \
+	  "--convert-qcow2" \
+	  "--customize=/usr/local/bin/vmdebootstrap-prepare-image" 
+	
+	RET=$?
+	if [[ ${RET} != 0 ]]
+	then
+		echo "vmdebootstrap failed, shit! try again ret: $?"
+		sleep 180
+	fi
+done
+
+rm -f {{ kvm_machine.name }}.img.raw
+chmod 600 {{ kvm_machine.name }}.img
+chown {{ kvm_machine.name }}:{{ kvm_machine.name }} {{ kvm_machine.name }}.img
+touch {{ kvm_machine.name }}.status.image_ready
+rm -f "/tmp/{{ kvm_machine.name }}.status.vmdebootsrap.running"
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=QEMU KVM IMAGE for {{ kvm_machine.name }}
+After=network.target auditd.service
+ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled
+PartOf=vm-{{ kvm_machine.name }}-qemu.service
+
+[Service]
+ExecStart={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-create-image.sh
+Type=oneshot
+RemainAfterExit=yes
+#RestartSec=30
+#Restart=on-failure
+

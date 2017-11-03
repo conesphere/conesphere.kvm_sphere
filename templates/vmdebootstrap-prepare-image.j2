@@ -1,0 +1,30 @@
+#!/bin/bash
+# This script is used by vmdebootstrap to customize 
+# debootstrapped system images. 
+# If you need to place a cfg file in the image just
+#   place a systemd path escaped file in image.img.conf.d
+# it will then be copied on the final image... 
+rootdir="${1}"
+imagename="${2}"
+vmname="${imagename%.img}"
+filepath="{{ kvm_image_root}}/${vmname}/conf.d"
+if [[ -d "${filepath}" ]]
+then
+  cd "${filepath}"
+  for f in *
+  do
+    if [[ "${f}" == "*" ]]
+    then
+      continue
+    fi
+    tpath=$(systemd-escape -p -u "${f}")
+    fnam="${tpath##*/}"
+    dnam="${rootdir}${tpath%/*}"
+    if [[ ! -d "${dnam}" ]]
+    then
+      mkdir -p "${dnam}" || exit $?
+    fi
+    cp -a "${f}" "${rootdir}${tpath}" || exit $?
+  done
+fi
+

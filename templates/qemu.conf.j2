@@ -1,0 +1,42 @@
+# qemu config file
+
+[drive]
+  file = "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.img"
+  format = "qcow2"
+
+[chardev "mon0"]
+  backend = "socket"
+  server = "on"
+  path = "/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S"
+  wait = "off"
+
+{% for bridge in kvm_machine.bridge %}
+{% set macbase=[bridge.guest, kvm_machine.name]|join('@')|checksum %}
+[device]
+  driver = "virtio-net-pci"
+  netdev = "{{ bridge.guest }}"
+  addr = "{{ '%x'|format(bridge.guest|regex_replace('^e..','')|int) }}"
+  mac = "{{ bridge.mac|default(['52', '54', '00', macbase[0:2], macbase[2:4], macbase[4:6]]|join(':')) }}"
+
+[netdev "{{ bridge.guest }}"]
+  type = "bridge"
+  br = "{{ bridge.host }}"
+
+{% endfor %}
+[mon]
+  chardev = "mon0"
+  mode = "readline"
+
+[machine]
+  accel = "kvm"
+  graphics = "off"
+
+[memory]
+  size = "{{ kvm_machine.memory|default("1024") }}"
+
+[smp-opts]
+  cpus = "{{ kvm_machine.cpu|default(1) }}"
+
+[vnc "default"]
+  vnc = "unix:/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.vnc.S"
+

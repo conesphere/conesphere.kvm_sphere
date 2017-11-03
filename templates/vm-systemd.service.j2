@@ -1,0 +1,16 @@
+[Unit]
+Description=QEMU KVM {{ kvm_machine.name }}
+After=network.target auditd.service
+Requires=vm-{{ kvm_machine.name }}-qemu.service
+ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled
+PartOf=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/touch {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.started
+ExecStop=/bin/rm {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.started
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

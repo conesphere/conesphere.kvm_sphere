@@ -1,0 +1,50 @@
+---
+# tasks file for conesphere.kvm.manager
+- apt: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - vmdebootstrap
+    - qemu-kvm
+    - socat
+- file:
+   dest: /usr/local/bin
+   state: directory
+   owner: root
+   group: root
+   mode: "0755"
+- template:
+   dest: /usr/local/bin/vmdebootstrap-prepare-image
+   src: templates/vmdebootstrap-prepare-image.j2
+   owner: root
+   group: root
+   mode: "0755"
+- file:
+   dest: "/etc/qemu"
+   state: directory
+   owner: root
+   group: root
+   mode: "0755"
+- template:
+   dest: /etc/qemu/bridge.conf
+   src: templates/etc-qemu-bridge.conf.j2
+   owner: root
+   group: root
+   mode: "0444"
+- file:
+   dest: "/usr/lib/qemu"
+   state: directory
+   owner: root
+   group: kvm
+   mode: "0750"
+- file:
+   dest: "/usr/lib/qemu/qemu-bridge-helper"
+   state: file
+   owner: root
+   group: root
+   mode: "4755"
+- include: kvm_machine.yml
+  with_items: "{{ kvm_machines }}"
+  loop_control:
+    loop_var: kvm_machine
+
