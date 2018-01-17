@@ -43,7 +43,7 @@
    owner: root
    group: root
    mode: "4755"
-- include: kvm_machine.yml
+- import_tasks: kvm_machine.yml
   with_items: "{{ kvm_machines }}"
   loop_control:
     loop_var: kvm_machine
