@@ -1,5 +1,5 @@
 [Unit]
-Description=QEMU KVM {{ kvm_machine.name }}
+Description=KVM {{ kvm_machine.name }} see vm-{{ kvm_machine.name }}-qemu.service for details
 After=network.target auditd.service
 Requires=vm-{{ kvm_machine.name }}-qemu.service
 ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled

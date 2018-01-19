@@ -1,9 +1,16 @@
 ---
 # defaults file for conesphere.kvm.manager
-kvm_image_root: "/var/vmimages"
+kvm_image_zpool: "data/image"
+kvm_zfs_filesystem: "data/kvm"
+kvm_image_root: "/kvm"
+
 # use list of all bridge interfaces from network 
 # config by default
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 
 # empty default for kvm machines 
 kvm_machines: []
+
+# kvm_images is a lookup table to download vm base image zfs snapshots 
+kvm_images: {}
+
