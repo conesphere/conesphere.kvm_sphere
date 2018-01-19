@@ -1,0 +1,25 @@
+#!/bin/bash
+CFGDIR=${1}
+
+if [[ ! -f "${CFGDIR}/sshd_config" ]]
+then
+	echo "Usage: path to sshd_config" 
+	exit 1
+fi
+
+grep -e "^HostKey " "${CFGDIR}/sshd_config" | (
+	while read hostkey keyfile foo 
+	do
+		keyname=${keyfile##*/}
+		IFS="_" read t1 t2 keytype t3 <<< "${keyname}"
+		if [[ -f "${CFGDIR}/${keyname}" ]]
+		then
+			rm "${CFGDIR}/${keyname}"
+		fi
+		if [[ -f "${CFGDIR}/${keyname}.pub" ]]
+		then
+			rm "${CFGDIR}/${keyname}.pub"
+		fi
+		ssh-keygen -N '' -t "${keytype}" -f "${CFGDIR}/${keyname}"
+	done
+)

@@ -14,8 +14,8 @@
    group: root
    mode: "0755"
 - template:
-   dest: /usr/local/bin/vmdebootstrap-prepare-image
-   src: templates/vmdebootstrap-prepare-image.j2
+   dest: /usr/local/bin/copy_cfg_to_image.sh
+   src: templates/copy_cfg_to_image.sh.j2
    owner: root
    group: root
    mode: "0755"
