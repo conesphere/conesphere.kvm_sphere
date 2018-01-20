@@ -16,6 +16,14 @@
     shell: "/bin/bash"
     home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
     update_password: always
+  register: kvm_user_added
+# we need to restart udev again here because udev 
+# because the user was not available when we added it in 
+# the udef rule 
+- service:
+    name: udev
+    state: restarted
+  when: kvm_user_added.changed
 - file:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
    state: directory
