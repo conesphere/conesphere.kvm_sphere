@@ -13,9 +13,15 @@
     mode: 0444
 - name: load image to pool
   shell: |
-     zfs list "{{ kvm_image_zpool }}/{{ kvm_image.key }}@{{ kvm_image_version.key }}" ||
-     pigz -d -c "{{ kvm_image_downloads }}/{{ kvm_image.key }}.{{ kvm_image_version.key }}.gz" | 
-     zfs receive "{{ kvm_image_zpool }}/{{ kvm_image.key }}"
+     zfs list "{{ kvm_image_zpool }}/{{ kvm_image.key }}@{{ kvm_image_version.key }}" 
+     if [[ $? != 0 ]] 
+     then
+       pigz -d -c "{{ kvm_image_downloads }}/{{ kvm_image.key }}.{{ kvm_image_version.key }}.gz" | 
+       zfs receive "{{ kvm_image_zpool }}/{{ kvm_image.key }}" && exit 42 || exit $?
+     fi
+     exit 0
   args:
     executable: /bin/bash
-  changed_when: False
+  register: zfs_load_image_result
+  failed_when: "zfs_load_image_result.rc != 42 and zfs_load_image_result.rc != 0"
+  changed_when: "zfs_load_image_result.rc == 42"
