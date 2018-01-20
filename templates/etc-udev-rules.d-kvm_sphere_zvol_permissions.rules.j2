@@ -1,0 +1,4 @@
+# permissions for zfs volumes
+{% for kvm_machine in kvm_machines %}
+ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk", MODE="0660", OWNER="{{ kvm_machine.name }}"
+{% endfor %}

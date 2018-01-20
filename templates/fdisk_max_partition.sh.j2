@@ -1,0 +1,20 @@
+#!/bin/bash
+DISK=${1}
+fdisk ${DISK} << EOF
+d
+n
+p
+1
+
+
+y
+a
+w
+EOF
+if [[ $? != 0 ]]
+then
+  echo Problems during fdisk 
+  exit 2
+fi
+partprobe ${DISK}
+sleep 1

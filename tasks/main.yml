@@ -26,6 +26,12 @@
    owner: root
    group: root
    mode: "0755"
+- template:
+   dest: /usr/local/bin/fdisk_max_partition.sh
+   src: templates/fdisk_max_partition.sh.j2
+   owner: root
+   group: root
+   mode: "0755"
 - file:
    dest: "/etc/qemu"
    state: directory
@@ -50,12 +56,23 @@
    owner: root
    group: root
    mode: "4755"
+- template:
+   dest: /etc/udev/rules.d/kvm_sphere_zvol_permissions.rules
+   src: templates/etc-udev-rules.d-kvm_sphere_zvol_permissions.rules.j2
+   owner: root
+   group: root
+   mode: "0644"
+  register: udev_zvol_permissions
+- service:
+    name: udev
+    state: restarted
+  when: udev_zvol_permissions.changed
 - include_tasks: kvm_image.yml
   with_dict: "{{ kvm_images }}"
   loop_control:
     loop_var: kvm_image
-# - include_tasks: kvm_machine.yml
-#   with_items: "{{ kvm_machines }}"
-#   loop_control:
-#     loop_var: kvm_machine
+- include_tasks: kvm_machine.yml
+  with_items: "{{ kvm_machines }}"
+  loop_control:
+    loop_var: kvm_machine
 

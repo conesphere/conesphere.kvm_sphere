@@ -1,8 +1,8 @@
 # qemu config file
 
 [drive]
-  file = "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.img"
-  format = "qcow2"
+  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk"
+  format = "raw"
 
 [chardev "mon0"]
   backend = "socket"

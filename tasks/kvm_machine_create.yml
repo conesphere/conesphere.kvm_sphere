@@ -1,0 +1,58 @@
+---
+- name: clone_vm_image
+  shell: |
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk" 
+     if [[ $? != 0 ]] 
+     then
+       zfs clone "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk" && exit 42 || exit $?
+     fi
+     exit 0
+  args:
+    executable: /bin/bash
+  register: kvm_zfs_clone_machine_result
+  failed_when: "kvm_zfs_clone_machine_result.rc != 42 and kvm_zfs_clone_machine_result.rc != 0"
+  changed_when: "kvm_zfs_clone_machine_result.rc == 42"
+- template:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-start.sh"
+   src: templates/qemu-start.sh.j2
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0755"
+- template:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-stop.sh"
+   src: templates/qemu-stop.sh.j2
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0755"
+- template:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-monitor.sh"
+   src: templates/qemu-monitor.sh.j2
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0755"
+- template:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.conf"
+   src: templates/qemu.conf.j2
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0640"
+- include_tasks: "prepare_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['type'] }}.yml"
+  when: kvm_zfs_clone_machine_result.changed
+- copy:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled"
+   content: ""
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0444"
+- template:
+   dest: "/etc/systemd/system/vm-{{ kvm_machine.name }}.service"
+   src: templates/vm-systemd.service.j2
+   owner: root
+   group: root
+   mode: "0644"
+- systemd:
+   enabled: yes
+   state: started
+   daemon_reload: yes
+   name: vm-{{ kvm_machine.name }}
+

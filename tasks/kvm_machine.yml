@@ -22,9 +22,9 @@
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0750"
-- import_tasks: host_unknown.yml
+- include_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
-- import_tasks: drop_kvm_image.yml
+- include_tasks: kvm_machine_drop.yml
   when: kvm_machine.deploy_to[inventory_hostname] == "drop"
-- import_tasks: create_kvm_image.yml
+- include_tasks: kvm_machine_create.yml
   when: kvm_machine.deploy_to[inventory_hostname] == "start"

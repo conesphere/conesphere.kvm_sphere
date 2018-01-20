@@ -1,15 +1,21 @@
 [Unit]
-Description=KVM {{ kvm_machine.name }} see vm-{{ kvm_machine.name }}-qemu.service for details
+Description=QEMU KVM {{ kvm_machine.name }} 
 After=network.target auditd.service
-Requires=vm-{{ kvm_machine.name }}-qemu.service
+#Requires=vm-{{ kvm_machine.name }}-backup.timer
 ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled
 PartOf=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/touch {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.started
-ExecStop=/bin/rm {{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.started
-Type=oneshot
-RemainAfterExit=yes
+ExecStart={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-start.sh
+ExecStop={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-stop.sh
+User={{ kvm_machine.name }}
+Group={{ kvm_machine.name }}
+KillMode=process
+Restart=on-failure
+RestartSec=60s
+TimeoutStopSec=60s
+TimeoutStartSec=infinity
+Type=forking
 
 [Install]
 WantedBy=multi-user.target
