@@ -1,0 +1,21 @@
+---
+- file:
+   dest: "{{ kvm_image_downloads }}"
+   state: directory
+   owner: "root"
+   group: "root"
+   mode: "0750"
+- name: "Download {{ kvm_image.key }} version {{ kvm_image_version.key }}"
+  get_url:
+    url: "{{ kvm_image_version.value.url }}"
+    checksum: "{{ kvm_image_version.value.chksum }}"
+    dest: "{{ kvm_image_downloads }}/{{ kvm_image.key }}.{{ kvm_image_version.key }}.gz"
+    mode: 0444
+- name: load image to pool
+  shell: |
+     zfs list "{{ kvm_image_zpool }}/{{ kvm_image.key }}@{{ kvm_image_version.key }}" ||
+     pigz -d -c "{{ kvm_image_downloads }}/{{ kvm_image.key }}.{{ kvm_image_version.key }}.gz" | 
+     zfs receive "{{ kvm_image_zpool }}/{{ kvm_image.key }}"
+  args:
+    executable: /bin/bash
+  changed_when: False

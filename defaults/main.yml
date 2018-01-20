@@ -1,8 +1,13 @@
 ---
 # defaults file for conesphere.kvm.manager
+# the zpool or filesystem that holds base images to clone from 
 kvm_image_zpool: "data/image"
+# the zfs filesystem or pool that will hold the running images 
+# and userdata
 kvm_zfs_filesystem: "data/kvm"
+# the directory in which userhomes and vm data will be stored
 kvm_image_root: "/kvm"
+kvm_image_downloads: "/root/downloads"
 
 # use list of all bridge interfaces from network 
 # config by default

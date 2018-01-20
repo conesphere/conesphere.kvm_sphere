@@ -6,10 +6,17 @@
   with_items:
     - vmdebootstrap
     - qemu-kvm
+    - pigz
     - socat
 - file:
    dest: /usr/local/bin
    state: directory
+   owner: root
+   group: root
+   mode: "0755"
+- template:
+   dest: /usr/local/bin/replace_ssh_host_keys.sh
+   src: templates/replace_ssh_host_keys.sh.j2
    owner: root
    group: root
    mode: "0755"
@@ -43,8 +50,12 @@
    owner: root
    group: root
    mode: "4755"
-- import_tasks: kvm_machine.yml
-  with_items: "{{ kvm_machines }}"
+- include_tasks: kvm_image.yml
+  with_dict: "{{ kvm_images }}"
   loop_control:
-    loop_var: kvm_machine
+    loop_var: kvm_image
+# - include_tasks: kvm_machine.yml
+#   with_items: "{{ kvm_machines }}"
+#   loop_control:
+#     loop_var: kvm_machine
 

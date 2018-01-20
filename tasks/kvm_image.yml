@@ -1,0 +1,6 @@
+---
+- include_tasks: kvm_image_version.yml
+  with_dict: "{{ kvm_image.value }}"
+  loop_control:
+    loop_var: kvm_image_version
+
