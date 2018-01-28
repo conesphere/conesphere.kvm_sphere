@@ -13,25 +13,25 @@
   failed_when: "kvm_zfs_clone_machine_result.rc != 42 and kvm_zfs_clone_machine_result.rc != 0"
   changed_when: "kvm_zfs_clone_machine_result.rc == 42"
 - template:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-start.sh"
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/start.sh"
    src: templates/qemu-start.sh.j2
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0755"
 - template:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-stop.sh"
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/stop.sh"
    src: templates/qemu-stop.sh.j2
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0755"
 - template:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-monitor.sh"
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/monitor.sh"
    src: templates/qemu-monitor.sh.j2
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0755"
 - template:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.conf"
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf"
    src: templates/qemu.conf.j2
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"

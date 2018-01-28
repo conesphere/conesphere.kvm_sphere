@@ -6,8 +6,8 @@ ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.n
 PartOf=multi-user.target
 
 [Service]
-ExecStart={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-start.sh
-ExecStop={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}-stop.sh
+ExecStart={{ kvm_image_root }}/{{ kvm_machine.name }}/start.sh
+ExecStop={{ kvm_image_root }}/{{ kvm_machine.name }}/stop.sh
 User={{ kvm_machine.name }}
 Group={{ kvm_machine.name }}
 KillMode=process
