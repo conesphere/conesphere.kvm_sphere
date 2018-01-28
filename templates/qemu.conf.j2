@@ -15,7 +15,7 @@
   fsdriver = "local"
   path = "{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ filesystem.name }}/"
   security_model = "mapped"
-  readonly = "off"
+  readonly = "{{ filesystem.readonly|default('off') }}"
 
 [virtfs]
   fsdriver = "local"

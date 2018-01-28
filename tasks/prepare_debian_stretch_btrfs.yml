@@ -54,4 +54,17 @@
     mount /dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk-part1 /mnt || exit $?
     /usr/local/bin/copy_cfg_to_image.sh {{ kvm_image_root }}/{{ kvm_machine.name }}/conf.d /mnt || exit $?
     /usr/local/bin/replace_ssh_host_keys.sh /mnt/etc/ssh || exit $?
+- name: drop root password
+  linefile:
+    path: /mnt/etc/shadow
+    regexp: '^root:'
+    line: 'root:!:17311:0:99999:7:::'
+- include_tasks: prepare_debian_stretch_btrfs_mount_filesystems.yml
+  with_items: "{{ kvm_machine.filesystems|default([]) }}"
+  loop_control:
+    loop_var: kvm_machine_filesystem
+- name: umount the volume
+  args:
+    executable: /bin/bash
+  shell: |
     umount /mnt
