@@ -1,4 +1,9 @@
 ---
+- name: make /tmp a tmpfs if it isnt one yet
+  linefile:
+    path: /mnt/etc/fstab
+    regexp: '^tmpfs'
+    line: 'tmpfs /tmp tmpfs rw,nosuid,mode=1777 0 0'
 - file:
    path: "{{ kvm_image_root }}/{{ kvm_machine.name }}/conf.d"
    state: directory
