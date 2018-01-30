@@ -30,4 +30,8 @@ then
 	exit 2
 fi
 
+{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == 'yes' %}
+qemu-system-x86_64 -cpu host -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf -daemonize
+{% else %}
 qemu-system-x86_64 -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf -daemonize
+{% endif %}

@@ -4,7 +4,6 @@
     name: "{{ item }}"
     state: latest
   with_items:
-    - vmdebootstrap
     - qemu-kvm
     - pigz
     - socat
