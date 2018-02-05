@@ -14,18 +14,6 @@
    group: root
    mode: "0755"
 - template:
-   dest: /usr/local/bin/replace_ssh_host_keys.sh
-   src: templates/replace_ssh_host_keys.sh.j2
-   owner: root
-   group: root
-   mode: "0755"
-- template:
-   dest: /usr/local/bin/copy_cfg_to_image.sh
-   src: templates/copy_cfg_to_image.sh.j2
-   owner: root
-   group: root
-   mode: "0755"
-- template:
    dest: /usr/local/bin/fdisk_max_partition.sh
    src: templates/fdisk_max_partition.sh.j2
    owner: root

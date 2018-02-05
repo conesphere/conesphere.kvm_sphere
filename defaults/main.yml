@@ -19,3 +19,6 @@ kvm_machines: []
 # kvm_images is a lookup table to download vm base image zfs snapshots 
 kvm_images: {}
 
+# initial value is the root user
+kvm_unique_name: 'root=0'
+kvm_unique_uid: '0=root'

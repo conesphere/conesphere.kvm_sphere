@@ -2,14 +2,33 @@
 # test if kvm machine needs to be set up or shut down here
 #- include: drop_kvm_image.yml
 #  when: 
+- name: uid machine name checksum
+  set_fact:
+    kvm_machine_tmp_chks: "{{ kvm_machine.name|checksum }}"
+- name: calc chkb and chkd
+  set_fact:
+    kvm_machine_tmp_chkb: "{{ ((kvm_machine_tmp_chks[5:6]|int(0, 16)/3.2)+1)|int|string }}"
+    kvm_machine_tmp_chkd: "{{ kvm_machine_tmp_chks[0:4]|int(0, 16)|string }}"
+- name: calculate new uid
+  set_fact:
+    kvm_machine_uid: "{{ kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int) }}"
+- fail:
+    msg: |
+      Uid {{ kvm_machine_uid }} is not unique or Name {{ kvm_machine.name }} is not unique. 
+      If two hostnames lead to the same uid try defining a different uid in the machine config.
+  when: kvm_machine_uid in kvm_unique_uid or kvm_machine.name in kvm_unique_name
+- name: set unique values
+  set_fact: 
+    kvm_unique_uid: "{{ kvm_unique_uid }} {{ kvm_machine_uid }}={{ kvm_machine.name }}"
+    kvm_unique_name: "{{ kvm_unique_name }} {{ kvm_machine.name }}={{ kvm_machine_uid }}"
 - group:
     name: "{{ kvm_machine.name }}"
-    gid: "{{ kvm_machine.gid|default(kvm_machine.uid) }}"
+    gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
     state: "present"
 - user:
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
-    uid: "{{ kvm_machine.uid }}"
+    uid: "{{ kvm_machine_uid }}"
     groups: kvm
     state: "present"
     createhome: "yes"
