@@ -39,12 +39,10 @@ kvm_images:
     'v0001':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_amd64.v0001.gz'
       chksum: 'sha256:b50f9882ad82b1f135e5d62daff5990d5874cf731cf5b8c4a0548f88bf42cd93'
-      kickoff_type: ext2
       resize_type: debian_gpt
   'CS_Debian_Stretch_9.3_amd64':
     'v0002':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_amd64.v0002.gz'
       chksum: 'sha256:55fb3845472fc226952dfb80a7c22bd830ce6b97c63b4770e8fa650db26aad1a'
-      kickoff_type: ext2
       resize_type: debian_gpt
 

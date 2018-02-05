@@ -26,8 +26,16 @@ fi
 
 if [[ -S /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S ]]
 then
-	echo There is a monitor socket file there, pse check fo another qemu instance 1st
-	exit 2
+	ps -eaf  | grep qemu-system-x86_64 | grep {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf 2> /dev/null
+	if [[ $? != 0 ]]
+	then
+		echo It appears that there is a socket file but no other qemu instance
+		echo I will take the risk deleting it and go ahead 
+		rm -f /tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S
+	else
+		echo There is a monitor socket file there, pse check fo another qemu instance 1st
+		exit 2
+	fi
 fi
 
 {% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == 'yes' %}

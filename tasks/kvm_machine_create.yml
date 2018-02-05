@@ -14,8 +14,9 @@
   changed_when: "kvm_zfs_kickoff_machine_result.rc == 42"
 - name: mount kickoff fd
   shell: |
-     /sbin/mkfs.{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['kickoff_type']|default('vfat') }} -q "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"  || exit $?
-     mount "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" /mnt
+     # todo -q is not available with vfat
+     /sbin/mkfs.{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['kickoff_type']|default('vfat') }} "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"  || exit $?
+     mount "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" /mnt
   args:
     executable: /bin/bash
   register: kvm_zfs_kickoff_mount_result

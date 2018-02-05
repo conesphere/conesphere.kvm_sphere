@@ -4,7 +4,7 @@
   file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk"
   format = "raw"
 
-{% for drive in kvm_machine.drives %}
+{% for drive in kvm_machine.disks|default([]) %}
 [drive]
   file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ drive.name }}"
   format = "raw"
@@ -14,8 +14,9 @@
   if = "floppy"
   index = "0"
   file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"
+  format = "raw"
 
-{% for filesystem in kvm_machine.filesystems %}
+{% for filesystem in kvm_machine.filesystems|default([]) %}
 [fsdev "{{ filesystem.name }}"]
   fsdriver = "local"
   path = "{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ filesystem.name }}/"
