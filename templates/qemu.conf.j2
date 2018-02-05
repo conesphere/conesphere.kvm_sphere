@@ -1,15 +1,20 @@
 # qemu config file
 
 [drive]
-  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk"
+  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk"
   format = "raw"
 
 {% for drive in kvm_machine.drives %}
 [drive]
-  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk_{{ drive.name }}"
+  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ drive.name }}"
   format = "raw"
 
 {% endfor %}
+[drive]
+  if = "floppy"
+  index = "0"
+  file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"
+
 {% for filesystem in kvm_machine.filesystems %}
 [fsdev "{{ filesystem.name }}"]
   fsdriver = "local"
@@ -52,7 +57,7 @@
   graphics = "off"
 
 [memory]
-  size = "{{ kvm_machine.memory|default("1024") }}"
+  size = "{{ kvm_machine.memory|default('1024') }}"
 
 [smp-opts]
   cpus = "{{ kvm_machine.cpu|default(1) }}"

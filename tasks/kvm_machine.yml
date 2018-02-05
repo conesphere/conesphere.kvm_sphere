@@ -21,6 +21,19 @@
   set_fact: 
     kvm_unique_uid: "{{ kvm_unique_uid }} {{ kvm_machine_uid }}={{ kvm_machine.name }}"
     kvm_unique_name: "{{ kvm_unique_name }} {{ kvm_machine.name }}={{ kvm_machine_uid }}"
+- name: create home filesystem
+  shell: |
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" 
+     if [[ $? != 0 ]] 
+     then
+       zfs create -o "mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" && exit 42 || exit $?
+     fi
+     exit 0
+  args:
+    executable: /bin/bash
+  register: kvm_zfs_home_create_result
+  failed_when: "kvm_zfs_home_create_result.rc != 42 and kvm_zfs_home_create_result.rc != 0"
+  changed_when: "kvm_zfs_home_create_result.rc == 42"
 - group:
     name: "{{ kvm_machine.name }}"
     gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
@@ -31,7 +44,7 @@
     uid: "{{ kvm_machine_uid }}"
     groups: kvm
     state: "present"
-    createhome: "yes"
+    createhome: "no"
     shell: "/bin/bash"
     home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
     update_password: always

@@ -1,7 +1,8 @@
 # permissions for zfs volumes
 {% for kvm_machine in kvm_machines %}
-ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk", MODE="0660", OWNER="{{ kvm_machine.name }}"
+ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff", MODE="0660", OWNER="{{ kvm_machine.name }}"
+ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk", MODE="0660", OWNER="{{ kvm_machine.name }}"
 {% for kvm_machine_disk in kvm_machine.disks|default([]) %}
-ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk_{{ kvm_machine_disk.name }}", MODE="0660", OWNER="{{ kvm_machine.name }}"
+ACTION=="add", SYMLINK=="zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ kvm_machine_disk.name }}", MODE="0660", OWNER="{{ kvm_machine.name }}"
 {% endfor %}
 {% endfor %}

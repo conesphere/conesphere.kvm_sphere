@@ -1,10 +1,45 @@
 ---
-- name: clone_vm_image
+- name: create kickoff fd
   shell: |
-     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk" 
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" 
      if [[ $? != 0 ]] 
      then
-       zfs clone "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk" && exit 42 || exit $?
+       zfs create -s -V 2M "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" && exit 42 || exit $?
+     fi
+     exit 0
+  args:
+    executable: /bin/bash
+  register: kvm_zfs_kickoff_machine_result
+  failed_when: "kvm_zfs_kickoff_machine_result.rc != 42 and kvm_zfs_kickoff_machine_result.rc != 0"
+  changed_when: "kvm_zfs_kickoff_machine_result.rc == 42"
+- name: mount kickoff fd
+  shell: |
+     /sbin/mkfs.{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['kickoff_type']|default('vfat') }} -q "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"  || exit $?
+     mount "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" /mnt
+  args:
+    executable: /bin/bash
+  register: kvm_zfs_kickoff_mount_result
+  when: kvm_zfs_kickoff_machine_result.changed
+- name: copy kickoff.yml
+  copy:
+    dest: /mnt/kickoff.yml
+    content: "{{ kvm_machine|to_nice_yaml(indent=2) }}"
+    owner: root
+    group: root
+    mode: "0600"
+  when: kvm_zfs_kickoff_machine_result.changed
+- name: umount kickoff fd
+  shell: |
+     umount /mnt
+  args:
+    executable: /bin/bash
+  when: kvm_zfs_kickoff_machine_result.changed
+- name: clone_vm_image
+  shell: |
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk" 
+     if [[ $? != 0 ]] 
+     then
+       zfs clone "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk" && exit 42 || exit $?
      fi
      exit 0
   args:
@@ -14,10 +49,10 @@
   changed_when: "kvm_zfs_clone_machine_result.rc == 42"
 - name: create additional disks
   shell: |
-     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk_{{ item.name }}" 
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ item.name }}" 
      if [[ $? != 0 ]] 
      then
-       zfs create -s -V "{{ item.size }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_disk_{{ item.name }}" && exit 42 || exit $?
+       zfs create -s -V "{{ item.size }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ item.name }}" && exit 42 || exit $?
      fi
      exit 0
   args:
@@ -28,12 +63,12 @@
   with_items: "{{ kvm_machine.disks|default([]) }}"
 - name: create additional filesystems
   shell: |
-     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_fs_{{ item.name }}" 
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/fs_{{ item.name }}" 
      if [[ $? != 0 ]] 
      then
-       zfs create -o "mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ item.name }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_fs_{{ item.name }}" && exit 42 || exit $?
+       zfs create -o "mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ item.name }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/fs_{{ item.name }}" && exit 42 || exit $?
      else
-       zfs mount | grep -e "^{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_fs_{{ item.name }}.*{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ item.name }}$" > /dev/null || zfs mount "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}_fs_{{ item.name }}"
+       zfs mount | grep -e "^{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/fs_{{ item.name }}.*{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ item.name }}$" > /dev/null || zfs mount "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/fs_{{ item.name }}"
      fi
      exit 0
   args:
@@ -74,8 +109,8 @@
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0640"
-- include_tasks: "prepare_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['type'] }}.yml"
-  when: kvm_zfs_clone_machine_result.changed
+- include_tasks: "resize_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['resize_type'] }}.yml"
+  when: kvm_zfs_clone_machine_result.changed and resize_type in kvm_images[kvm_machine.image][kvm_machine.image_version]
 - copy:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled"
    content: ""

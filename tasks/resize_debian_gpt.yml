@@ -1,0 +1,8 @@
+---
+- name: resize_image
+  args:
+    executable: /bin/bash
+  shell: |
+    zfs set volsize={{ kvm_machine.image_volsize }} "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk"  || exit $?
+    /usr/local/bin/fdisk_max_partition.sh /dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk || exit $?
+  when: "'image_volsize' in kvm_machine"

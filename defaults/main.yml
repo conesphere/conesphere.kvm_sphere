@@ -16,9 +16,35 @@ kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 # empty default for kvm machines 
 kvm_machines: []
 
-# kvm_images is a lookup table to download vm base image zfs snapshots 
-kvm_images: {}
-
 # initial value is the root user
+# the unique name variables are used tio detect if either the user 
+# has set a machine name twice or if two machine name are leading to 
+# the same uid (which is generated via a checksum) in that case rollout 
+# is cancelled so user can fix the problem, for example by defining a uid in 
+# the kvm_machine structure. 
 kvm_unique_name: 'root=0'
 kvm_unique_uid: '0=root'
+
+#
+# This is a default set of VM images 
+# you may create your own images, too
+# images are basicly zfs snapshots of an operating system delivered with a 
+# kickoff script. The image receives its setting via a floppy disk image containing a 
+# kickstart.yml file which contains the values from its kvm_machine section in ansible 
+# a kickstart script then adds remote access and networking and cycles hostname and 
+# ssh keys 
+#
+kvm_images:
+  'CS_Debian_Stretch_9.3.nesting_amd64':
+    'v0001':
+      url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_amd64.v0001.gz'
+      chksum: 'sha256:b50f9882ad82b1f135e5d62daff5990d5874cf731cf5b8c4a0548f88bf42cd93'
+      kickoff_type: ext2
+      resize_type: debian_gpt
+  'CS_Debian_Stretch_9.3_amd64':
+    'v0002':
+      url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_amd64.v0002.gz'
+      chksum: 'sha256:55fb3845472fc226952dfb80a7c22bd830ce6b97c63b4770e8fa650db26aad1a'
+      kickoff_type: ext2
+      resize_type: debian_gpt
+
