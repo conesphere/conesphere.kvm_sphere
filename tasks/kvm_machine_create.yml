@@ -12,6 +12,11 @@
   register: kvm_zfs_kickoff_machine_result
   failed_when: "kvm_zfs_kickoff_machine_result.rc != 42 and kvm_zfs_kickoff_machine_result.rc != 0"
   changed_when: "kvm_zfs_kickoff_machine_result.rc == 42"
+- name: Wait for kickoff device to get ready 
+  wait_for:
+    path: "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff"
+    state: present
+  when: kvm_zfs_kickoff_machine_result.changed
 - name: mount kickoff fd
   shell: |
      # todo -q is not available with vfat
