@@ -1,15 +1,10 @@
 #!/bin/bash
 DISK=${1}
-fdisk ${DISK} << EOF
-d
-2
-n
-2
-
-
-y
-a
-w
+parted ${DISK} << EOF
+print
+fix
+resizepart 2 100%
+quit
 EOF
 if [[ $? != 0 ]]
 then

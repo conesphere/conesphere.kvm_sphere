@@ -73,7 +73,5 @@
   addr = "{{ kvm_machine_spice_addr }}"
   port = "{{ kvm_machine_spice_port }}"
   password = "{{ kvm_machine_spice_password }}"
-  sasl = "on"
-  gl = "{{ kvm_machine.spice_gl|default('off') }}"
 
 {% endif %}

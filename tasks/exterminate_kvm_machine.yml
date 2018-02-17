@@ -1,0 +1,25 @@
+---
+- service:
+   name: "vm-{{ kvm_machine_name }}"
+   state: stopped
+   enabled: no
+  failed_when: False
+- name: exterminate virtual machine storage
+  args:
+    executable: /bin/bash
+  shell: |
+    zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine_name }}"
+    if [[ $? == 0 ]]
+    then
+      zfs destroy -R "{{ kvm_zfs_filesystem }}/{{ kvm_machine_name }}"  || exit $?
+    fi
+    exit 0
+- user:
+    name: "{{ kvm_machine_name }}"
+    state: "absent"
+  failed_when: False
+- group:
+    name: "{{ kvm_machine_name }}"
+    state: "absent"
+  failed_when: False
+
