@@ -13,6 +13,23 @@ kvm_image_downloads: "/root/downloads"
 # config by default
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 
+# usage: 
+# kvm_spice_passwords: 
+#    somemachinename: somesecretpassword   
+#    someothermachinename: someothersecretpassword   
+#
+kvm_spice_passwords: {}
+kvm_default_spice_password: "ToLazyToConfigureASpicePassword"
+
+kvm_default_bios: "ovmf"
+kvm_default_bios_file: "/usr/share/ovmf/OVMF.fd"
+
+#kvm_default_bios: "seabios"
+#kvm_default_bios_file: "/usr/share/seabios/bios.bin"
+
+kvm_monitor: "spice"
+kvm_spice_addr: "192.168.1.10"
+
 # empty default for kvm machines 
 kvm_machines: []
 

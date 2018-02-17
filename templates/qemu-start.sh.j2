@@ -43,3 +43,5 @@ qemu-system-x86_64 -cpu host -net none -readconfig {{ kvm_image_root }}/{{ kvm_m
 {% else %}
 qemu-system-x86_64 -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf -daemonize
 {% endif %}
+# alternative here 
+# xl create {{ kvm_image_root }}/{{ kvm_machine.name }}/xl.cfg

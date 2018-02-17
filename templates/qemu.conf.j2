@@ -63,6 +63,16 @@
 [smp-opts]
   cpus = "{{ kvm_machine.cpu|default(1) }}"
 
+{% if kvm_monitor == "vnc" %}
 [vnc "default"]
   vnc = "unix:/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.vnc.S"
 
+{% else %}
+[spice]
+  addr = "::1"
+  port = "{{ kvm_machine_uid }}"
+  password = "{{ kvm_machine_spicepasswd }}"
+  sasl = "on"
+  gl = "{{ kvm_machine.spice_gl|default('off') }}"
+
+{% endif %}

@@ -1,0 +1,80 @@
+# =====================================================================
+# Example HVM guest configuration
+# =====================================================================
+#
+# This is a fairly minimal example of what is required for an
+# HVM guest. For a more complete guide see xl.cfg(5)
+
+# This configures an HVM rather than PV guest
+builder = "hvm"
+
+bios="ovmf"
+bios_path_override="/usr/share/ovmf/OVMF.fd"
+
+# Guest name
+name = "debian.hvm"
+
+# 128-bit UUID for the domain as a hexadecimal number.
+# Use "uuidgen" to generate one if required.
+# The default behavior is to generate a new UUID each time the guest is started.
+#uuid = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+
+# Enable Microsoft Hyper-V compatibile paravirtualisation /
+# enlightenment interfaces. Turning this on can improve Windows guest
+# performance and is therefore recommended
+viridian = 1
+
+# Initial memory allocation (MB)
+memory = 4096
+
+# Maximum memory (MB)
+# If this is greater than `memory' then the slack will start ballooned
+# (this assumes guest kernel support for ballooning)
+maxmem = 4096
+
+# Number of VCPUS
+vcpus = 4
+
+# Network devices
+# A list of 'vifspec' entries as described in
+# docs/misc/xl-network-configuration.markdown
+vif = [ 'bridge=xen' ]
+
+# Disk Devices
+# A list of `diskspec' entries as described in
+# docs/misc/xl-disk-configuration.txt
+# disk = [ '/dev/data/images/debian_base,raw,xvda,rw', '/root/data/debian-9.3.0-amd64-netinst.iso,raw,xvdb,cdrom' ]
+disk = [ '/dev/data/images/debian_base,raw,xvda,rw' ]
+
+# Guest VGA console configuration, either SDL or VNC
+#sdl = 1
+#vnc = 1
+
+rdm="strategy=host,policy=relaxed"
+
+#rdm_mem_boundary=1024
+xen_platform_pci = '1'
+gfx_passthru='igd'
+#pci_permissive=1
+#pci=['00:02.0,permissive=1']
+#pci=['00:0e.0,seize=1,permissive=1', '00:15.0,seize=1,permissive=1']
+#pci=['00:02.0,seize=1,permissive=1', '00:0e.0,seize=1,permissive=1', '00:15.0,seize=1,permissive=1']
+
+on_halt="destroy"
+on_poweroff="destroy"
+on_reboot="destroy"
+on_watchdog="destroy"
+on_crash="destroy"
+on_soft_reset="destroy"
+
+#vga="cirrus"
+vga="qxl"
+spice=1
+spicehost="::1"
+spiceport={{ kvm_machine_uid }}
+spice_clipboard_sharing=1
+spicepasswd="{{ kvm_machine_spicepasswd }}"
+
+#usb=1
+#usbdevice=['host:1e7d:2fa8', 'host:046d:c077']
+
