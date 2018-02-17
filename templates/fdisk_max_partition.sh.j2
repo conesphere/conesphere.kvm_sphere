@@ -1,5 +1,8 @@
 #!/bin/bash
 DISK=${1}
+PARTNUM=${2:-1}
+if [[ ${PARTNUM} != 1 ]]
+then
 fdisk ${DISK} << EOF
 d
 n
@@ -11,7 +14,23 @@ y
 a
 w
 EOF
-if [[ $? != 0 ]]
+RET=$?
+else
+fdisk ${DISK} << EOF
+d
+${PARTNUM}
+n
+p
+${PARTNUM}
+
+
+y
+a
+w
+EOF
+RET=$?
+fi
+if [[ ${RET} != 0 ]]
 then
   echo Problems during fdisk 
   exit 2
