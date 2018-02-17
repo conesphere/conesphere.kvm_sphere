@@ -69,9 +69,9 @@
 
 {% else %}
 [spice]
-  addr = "::1"
-  port = "{{ kvm_machine_uid }}"
-  password = "{{ kvm_machine_spicepasswd }}"
+  addr = "{{ kvm_machine_spice_addr }}"
+  port = "{{ kvm_machine_spice_port }}"
+  password = "{{ kvm_machine_spice_password }}"
   sasl = "on"
   gl = "{{ kvm_machine.spice_gl|default('off') }}"
 

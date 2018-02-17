@@ -20,6 +20,7 @@ kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 #
 kvm_spice_passwords: {}
 kvm_default_spice_password: "ToLazyToConfigureASpicePassword"
+kvm_default_spice_addr: "::1"
 
 kvm_default_bios: "ovmf"
 kvm_default_bios_file: "/usr/share/ovmf/OVMF.fd"

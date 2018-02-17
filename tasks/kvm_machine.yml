@@ -13,6 +13,8 @@
   set_fact:
     kvm_machine_uid: "{{ kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int) }}"
     kvm_machine_spice_password: "{{ kvm_spice_passwords[kvm_machine.name]|default(kvm_default_spice_password|default('ToLazyToConfigureASpicePassword')) }}"
+    kvm_machine_spice_addr: "{{ kvm_machine.spice_addr|default(kvm_default_spice_addr|default('::1')) }}"
+    kvm_machine_spice_port: "{{ kvm_machine.spice_port|default(kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int)) }}"
     kvm_bios_file: "{{ kvm_default_bios_file }}"
     kvm_bios: "{{ kvm_default_bios }}"
 - fail:
