@@ -1,4 +1,46 @@
 ---
+- name: create home filesystem
+  shell: |
+     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" 
+     if [[ $? != 0 ]] 
+     then
+       zfs create -o "mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" && exit 42 || exit $?
+     fi
+     exit 0
+  args:
+    executable: /bin/bash
+  register: kvm_zfs_home_create_result
+  failed_when: "kvm_zfs_home_create_result.rc != 42 and kvm_zfs_home_create_result.rc != 0"
+  changed_when: "kvm_zfs_home_create_result.rc == 42"
+- group:
+    name: "{{ kvm_machine.name }}"
+    gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
+    state: "present"
+- user:
+    name: "{{ kvm_machine.name }}"
+    group: "{{ kvm_machine.name }}"
+    uid: "{{ kvm_machine_uid }}"
+    groups: kvm
+    state: "present"
+    createhome: "no"
+    shell: "/bin/bash"
+    home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
+    update_password: always
+  register: kvm_user_added
+# we need to restart udev again here because udev 
+# because the user was not available when we added it in 
+# the udef rule 
+- service:
+    name: udev
+    state: restarted
+  when: kvm_user_added.changed
+- name: change ownership of kvm_machine home fs 
+  file:
+   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
+   state: directory
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0750"
 - name: create kickoff fd
   shell: |
      zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff" 

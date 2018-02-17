@@ -1,7 +1,5 @@
 ---
 # test if kvm machine needs to be set up or shut down here
-#- include: drop_kvm_image.yml
-#  when: 
 - name: uid machine name checksum
   set_fact:
     kvm_machine_tmp_chks: "{{ kvm_machine.name|checksum }}"
@@ -25,50 +23,13 @@
   set_fact: 
     kvm_unique_uid: "{{ kvm_unique_uid }} {{ kvm_machine_uid }}={{ kvm_machine.name }}"
     kvm_unique_name: "{{ kvm_unique_name }} {{ kvm_machine.name }}={{ kvm_machine_uid }}"
-- name: create home filesystem
-  shell: |
-     zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" 
-     if [[ $? != 0 ]] 
-     then
-       zfs create -o "mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }}" "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" && exit 42 || exit $?
-     fi
-     exit 0
-  args:
-    executable: /bin/bash
-  register: kvm_zfs_home_create_result
-  failed_when: "kvm_zfs_home_create_result.rc != 42 and kvm_zfs_home_create_result.rc != 0"
-  changed_when: "kvm_zfs_home_create_result.rc == 42"
-- group:
-    name: "{{ kvm_machine.name }}"
-    gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
-    state: "present"
-- user:
-    name: "{{ kvm_machine.name }}"
-    group: "{{ kvm_machine.name }}"
-    uid: "{{ kvm_machine_uid }}"
-    groups: kvm
-    state: "present"
-    createhome: "no"
-    shell: "/bin/bash"
-    home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
-    update_password: always
-  register: kvm_user_added
-# we need to restart udev again here because udev 
-# because the user was not available when we added it in 
-# the udef rule 
-- service:
-    name: udev
-    state: restarted
-  when: kvm_user_added.changed
-- file:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
-   state: directory
-   owner: "{{ kvm_machine.name }}"
-   group: "{{ kvm_machine.name }}"
-   mode: "0750"
 - include_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
-- include_tasks: kvm_machine_drop.yml
-  when: kvm_machine.deploy_to[inventory_hostname] == "drop"
+- include_tasks: exterminate_kvm_machine.yml
+  with_dict: 
+    - "{{ kvm_machine.name }}"
+  loop_control:
+    loop_var: kvm_machine_name
+  when: kvm_machine.deploy_to[inventory_hostname] == "drop" or kvm_machine.deploy_to[inventory_hostname] == "exterminate"
 - include_tasks: kvm_machine_create.yml
   when: kvm_machine.deploy_to[inventory_hostname] == "start"

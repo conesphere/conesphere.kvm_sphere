@@ -65,6 +65,10 @@
   with_dict: "{{ kvm_images }}"
   loop_control:
     loop_var: kvm_image
+- include_tasks: exterminate_kvm_machine.yml
+  with_dict: "{{ kvm_machine_exterminate }}"
+  loop_control:
+    loop_var: kvm_machine_name
 - include_tasks: kvm_machine.yml
   with_items: "{{ kvm_machines }}"
   loop_control:
