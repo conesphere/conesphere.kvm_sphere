@@ -55,6 +55,7 @@
 
 [machine]
   accel = "kvm"
+  firmware = "{{ kvm_firmware[kvm_machine_firmware_type] }}"
   graphics = "off"
 
 [memory]

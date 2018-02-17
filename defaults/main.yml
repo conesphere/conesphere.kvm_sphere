@@ -22,11 +22,14 @@ kvm_spice_passwords: {}
 kvm_default_spice_password: "ToLazyToConfigureASpicePassword"
 kvm_default_spice_addr: "::1"
 
-kvm_default_bios: "ovmf"
-kvm_default_bios_file: "/usr/share/ovmf/OVMF.fd"
+# BIOS NAME --> Firmware File
+kvm_firmware:
+  'uefi': "/usr/share/ovmf/OVMF.fd"
+  'ovmf': "/usr/share/ovmf/OVMF.fd"
+  'bios': "/usr/share/seabios/bios.bin"
+  'seabios': "/usr/share/seabios/bios.bin"
 
-#kvm_default_bios: "seabios"
-#kvm_default_bios_file: "/usr/share/seabios/bios.bin"
+kvm_default_firmware_type: "ovmf"
 
 kvm_monitor: "spice"
 kvm_spice_addr: "192.168.1.10"
@@ -58,9 +61,23 @@ kvm_images:
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_amd64.v0001.gz'
       chksum: 'sha256:b50f9882ad82b1f135e5d62daff5990d5874cf731cf5b8c4a0548f88bf42cd93'
       resize_type: debian_gpt
+      firmware_type: bios
   'CS_Debian_Stretch_9.3_amd64':
     'v0002':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_amd64.v0002.gz'
       chksum: 'sha256:55fb3845472fc226952dfb80a7c22bd830ce6b97c63b4770e8fa650db26aad1a'
       resize_type: debian_gpt
+      firmware_type: bios
+  'CS_Debian_Stretch_9.3.nesting_uefi_amd64':
+    'v0001':
+      url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_uefi_amd64.v0001.gz'
+      chksum: 'sha256:b1f1b96be2b8c64a421c725145ad68e65d26d38bc36426206eb37a324b4d0688'
+      resize_type: debian_gpt_uefi
+      firmware_type: uefi
+  'CS_Debian_Stretch_9.3_uefi_amd64':
+    'v0001':
+      url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_uefi_amd64.v0001.gz'
+      chksum: 'sha256:375ccba903d99d87308fa0d5b66c69b290e1a98aa690559a629c7aacf81df40d'
+      resize_type: debian_gpt_uefi
+      firmware_type: uefi
 
