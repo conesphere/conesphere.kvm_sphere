@@ -6,6 +6,8 @@
   with_items:
     - qemu-kvm
     - pigz
+    - parted
+    - fdisk
     - socat
     - ovmf
 - file:
