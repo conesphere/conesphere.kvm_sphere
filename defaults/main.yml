@@ -10,6 +10,9 @@ kvm_image_root: "/kvm"
 kvm_image_downloads: "/root/downloads"
 kvm_firmware_root: "/etc/kvm_firmware"
 
+# configure kvm acceleration by machine 
+kvm_machine_accel: {}
+
 # use list of all bridge interfaces from network 
 # config by default
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
