@@ -54,7 +54,7 @@
   mode = "readline"
 
 [machine]
-  accel = "kvm"
+  accel = "{{ kvm_machine.accel|default('kvm') }}"
   firmware = "{{ kvm_firmware[kvm_machine_firmware_type] }}"
   graphics = "off"
 
