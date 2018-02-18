@@ -10,6 +10,7 @@
     - fdisk
     - socat
     - ovmf
+    - dosfstools
 - file:
    dest: /usr/local/bin
    state: directory
@@ -63,10 +64,11 @@
     name: udev
     state: restarted
   when: udev_zvol_permissions.changed
-- include_tasks: kvm_image.yml
-  with_dict: "{{ kvm_images }}"
-  loop_control:
-    loop_var: kvm_image
+# we do load images on deand now 
+# - include_tasks: kvm_image.yml
+#   with_dict: "{{ kvm_images }}"
+#   loop_control:
+#     loop_var: kvm_image
 - include_tasks: exterminate_kvm_machine.yml
   with_items: "{{ kvm_machine_exterminate }}"
   loop_control:
