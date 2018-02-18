@@ -88,6 +88,7 @@
   args:
     executable: /bin/bash
   register: kvm_check_image_available
+  changed_when: False
   failed_when: False
 - name: download image 
   include_tasks: kvm_image_version.yml
