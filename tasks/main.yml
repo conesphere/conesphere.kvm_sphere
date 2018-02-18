@@ -64,11 +64,21 @@
     name: udev
     state: restarted
   when: udev_zvol_permissions.changed
-# we do load images on deand now 
-# - include_tasks: kvm_image.yml
-#   with_dict: "{{ kvm_images }}"
-#   loop_control:
-#     loop_var: kvm_image
+- file:
+   dest: "{{ kvm_firmware_root }}"
+   state: directory
+   owner: "root"
+   group: "root"
+   mode: "0750"
+- name: "Download {{ kvm_firmware_cur.key }}"
+  get_url:
+    url: "{{ kvm_firmware_cur.value.url }}"
+    checksum: "{{ kvm_firmware_cur.value.chksum }}"
+    dest: "{{ kvm_firmware_root }}/{{ kvm_firmware_cur.key }}.firmware"
+    mode: 0444
+  with_dict: "{{ kvm_firmware }}"
+  loop_control:
+    loop_var: kvm_firmware_cur
 - include_tasks: exterminate_kvm_machine.yml
   with_items: "{{ kvm_machine_exterminate }}"
   loop_control:

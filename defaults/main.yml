@@ -8,6 +8,7 @@ kvm_zfs_filesystem: "data/kvm"
 # the directory in which userhomes and vm data will be stored
 kvm_image_root: "/kvm"
 kvm_image_downloads: "/root/downloads"
+kvm_firmware_root: "/etc/kvm_firmware"
 
 # use list of all bridge interfaces from network 
 # config by default
@@ -24,12 +25,16 @@ kvm_default_spice_addr: "::1"
 
 # BIOS NAME --> Firmware File
 kvm_firmware:
-  'uefi': "/usr/share/ovmf/OVMF.fd"
-  'ovmf': "/usr/share/ovmf/OVMF.fd"
-  'bios': "/usr/share/seabios/bios.bin"
-  'seabios': "/usr/share/seabios/bios.bin"
+  'ovmf_2018022300': 
+    type: ovmf
+    url: 'https://www.conesphere.com/kvmsphere/ovmf_2018022300.firmware'
+    chksum: 'sha256:c9c6662fc3561288fb882f4ba3a02e5f1f50606549695ed8927972ddc4e2b67b'
+  'bios_2018022300':
+    type: bios
+    url: 'https://www.conesphere.com/kvmsphere/bios_2018022300.firmware'
+    chksum: 'sha256:13cd3bb7e5468920bcb2877cf530d0c7a56e96b6fb88a4b95f91346ff576501a'
 
-kvm_default_firmware_type: "ovmf"
+kvm_default_firmware: "ovmf_2018022300"
 
 kvm_monitor: "spice"
 kvm_spice_addr: "192.168.1.10"
@@ -65,23 +70,23 @@ kvm_images:
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_amd64.v0001.gz'
       chksum: 'sha256:b50f9882ad82b1f135e5d62daff5990d5874cf731cf5b8c4a0548f88bf42cd93'
       resize_type: debian_gpt
-      firmware_type: bios
+      firmware: bios_2018022300
   'CS_Debian_Stretch_9.3_amd64':
     'v0002':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_amd64.v0002.gz'
       chksum: 'sha256:55fb3845472fc226952dfb80a7c22bd830ce6b97c63b4770e8fa650db26aad1a'
       resize_type: debian_gpt
-      firmware_type: bios
+      firmware: bios_2018022300
   'CS_Debian_Stretch_9.3.nesting_uefi_amd64':
-    'v0002':
+    'v0003':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_uefi_amd64.v0002.gz'
       chksum: 'sha256:e2d7e6000f90963f9377e09688143e015df8e515134d76c865d246b052586549'
       resize_type: debian_gpt_uefi
-      firmware_type: uefi
+      firmware: uefi_2018022300
   'CS_Debian_Stretch_9.3_uefi_amd64':
-    'v0001':
+    'v0002':
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_uefi_amd64.v0001.gz'
       chksum: 'sha256:375ccba903d99d87308fa0d5b66c69b290e1a98aa690559a629c7aacf81df40d'
       resize_type: debian_gpt_uefi
-      firmware_type: uefi
+      firmware: uefi_2018022300
 
