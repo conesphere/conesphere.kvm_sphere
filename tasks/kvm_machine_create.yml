@@ -190,4 +190,5 @@
    state: started
    daemon_reload: yes
    name: vm-{{ kvm_machine.name }}
+  when: kvm_start_service == 'yes'
 

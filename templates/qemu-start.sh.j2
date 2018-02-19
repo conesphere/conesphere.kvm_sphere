@@ -39,9 +39,9 @@ then
 fi
 
 {% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == 'yes' %}
-qemu-system-x86_64 -cpu host -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
+nice -n "{{ kvm_machine_niceness }}" qemu-system-x86_64 -cpu host -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 {% else %}
-qemu-system-x86_64 -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
+nice -n "{{ kvm_machine_niceness }}" qemu-system-x86_64 -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 {% endif %}
 # alternative here 
 # xl create {{ kvm_image_root }}/{{ kvm_machine.name }}/xl.cfg

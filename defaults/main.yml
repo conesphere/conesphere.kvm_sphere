@@ -13,6 +13,15 @@ kvm_firmware_root: "/etc/kvm_firmware"
 # configure kvm acceleration by machine 
 kvm_machine_accel: {}
 
+# a virtual machine must not be nice at all 
+kvm_default_niceness: '-16'
+
+# a virtual machine must not be nice at all 
+kvm_default_drive_if: 'virtio'
+
+#whether to start kvm systemd service 
+kvm_start_service: 'yes'
+
 # use list of all bridge interfaces from network 
 # config by default
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
