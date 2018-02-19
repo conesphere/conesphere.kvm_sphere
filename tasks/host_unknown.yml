@@ -1,0 +1,6 @@
+---
+- fail:
+    msg: |
+      {{ inventory_hostname }} is not configured for {{ kvm_machine.name }} 
+      host unknown Error
+
