@@ -25,11 +25,10 @@
   security_model = "mapped"
   readonly = "{{ filesystem.readonly|default('off') }}"
 
-[virtfs]
-  fsdriver = "local"
-  path = "{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ filesystem.name }}/"
+[device]
+  driver = "virtio-9p-pci"
+  fsdev = "{{ filesystem.name }}"
   mount_tag = "{{ filesystem.name }}"
-  security_model = "mapped"
 
 {% endfor %}
 [chardev "mon0"]
