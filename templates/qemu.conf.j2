@@ -2,13 +2,13 @@
 
 [drive]
   file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk"
-  if = "{{ qemu_machine_drive_if }}"
+  if = "{{ kvm_machine_drive_if }}"
   format = "raw"
 
 {% for drive in kvm_machine.disks|default([]) %}
 [drive]
   file = "/dev/zvol/{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ drive.name }}"
-  if = "{{ qemu_machine_drive_if }}"
+  if = "{{ kvm_machine_drive_if }}"
   format = "raw"
 
 {% endfor %}
