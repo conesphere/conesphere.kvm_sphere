@@ -39,7 +39,20 @@ then
 fi
 
 {% if 'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True %}
-	zfs 
+	zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}@freeze"
+	if [[ $? != 0 ]]
+	then
+		zfs snap -r {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}@freeze
+	else
+		zfs rollback -Rf {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk@freeze || exit $?
+		zfs rollback -Rf {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff@freeze || exit $?
+		{% for dsk in kvm_machine.disks|default([]) %}
+			zfs rollback -Rf {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ dsk }}@freeze || exit $?
+		{% endfor %}
+		{% for fstm in kvm_machine.filesystems|default([]) %}
+			zfs rollback -Rf {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/fs_{{ fstm }}@freeze || exit $?
+		{% endfor %}
+	fi
 {% endif %}
 
 {% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}
