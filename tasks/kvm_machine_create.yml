@@ -191,7 +191,7 @@
    owner: root
    group: root
    mode: "0644"
-  when: 'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True
+  when: 'systemd_listen_stream' in kvm_machine and kvm_machine.systemd_listen_stream == True
 - systemd:
    enabled: yes
    state: started
