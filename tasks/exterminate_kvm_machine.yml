@@ -14,6 +14,17 @@
       zfs destroy -R "{{ kvm_zfs_filesystem }}/{{ kvm_machine_name }}"  || exit $?
     fi
     exit 0
+- name: exterminate frozen virtual machine storage if needed
+  args:
+    executable: /bin/bash
+  shell: |
+    zfs list "{{ kvm_zfs_filesystem }}_frozen/{{ kvm_machine_name }}"
+    if [[ $? == 0 ]]
+    then
+      zfs destroy -R "{{ kvm_zfs_filesystem }}_frozen/{{ kvm_machine_name }}"  || exit $?
+    fi
+    exit 0
+  when: "'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True"
 - user:
     name: "{{ kvm_machine_name }}"
     state: "absent"
