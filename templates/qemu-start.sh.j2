@@ -46,23 +46,41 @@ fi
 	zfs list "{{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}@freeze"
 	if [[ $? != 0 ]]
 	then
-		zfs rename -p {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }} || exit $?
+		zfs list "{{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}"
+		if [[ $? != 0 ]]
+		then
+			zfs set mountpoint=none {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}
+			zfs rename -pf {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}
+		fi
 		zfs snap -r {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}@freeze || exit $?
 	else
-		zfs rename -p {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} {{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }} || exit $?
+		zfs list "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}"
+		if [[ $? == 0 ]]
+		then
+			zfs destroy -R "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}" || exit $?
+		fi
+		zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}"
+		if [[ $? == 0 ]]
+		then
+			zfs set mountpoint=none {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}
+			zfs rename -fp {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} {{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }} || exit $?
+		fi
 	fi
-	zfs clone {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} || exit $?
+	zfs clone -p -o mountpoint={{ kvm_image_root }}/{{ kvm_machine.name }} {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }} || exit $?
+	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/disk@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk || exit $?
+	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/kickoff@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff || exit $?
+	# TODO Insert looping for fs_ and disk_ here
 	{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}
-		su {{ kvm_machine.name }} -c 'qemu-system-x86_64 -cpu host -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize'
+		sudo -u {{ kvm_machine.name }} qemu-system-x86_64 -cpu host -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 	{% else %}
-		su {{ kvm_machine.name }} -c 'qemu-system-x86_64 -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize'
+		sudo -u {{ kvm_machine.name }} qemu-system-x86_64 -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 	{% endif %}
 	# alternative here 
 	# xl create {{ kvm_image_root }}/{{ kvm_machine.name }}/xl.cfg
 	zfs list "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}"
-	if [[ $? != 0 ]]
+	if [[ $? == 0 ]]
 	then
-		nohup zfs destroy "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}" &
+		nohup zfs destroy -R "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}" &
 	fi
 	exit 0 
 {% else %}

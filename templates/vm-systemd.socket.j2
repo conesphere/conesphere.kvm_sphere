@@ -2,7 +2,7 @@
 Description=QEMU KVM {{ kvm_machine.name }} spice socket
 
 [Socket]
-ListenStream=[{{ kvm_machine_spice_addr }}]{{ kvm_machine_spice_port }}
+ListenStream=[{{ kvm_machine_spice_addr }}]:{{ kvm_machine_spice_port }}
 
 [Install]
 WantedBy=sockets.target

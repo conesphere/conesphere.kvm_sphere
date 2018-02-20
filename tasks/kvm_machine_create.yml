@@ -148,6 +148,13 @@
    mode: "0700"
   with_items: "{{ kvm_machine.filesystems|default([]) }}"
 - template:
+   dest: "/usr/local/bin/{{ kvm_machine.name }}_start.sh"
+   src: templates/qemu-start.sh.j2
+   owner: "{{ kvm_machine.name }}"
+   group: "{{ kvm_machine.name }}"
+   mode: "0755"
+  when: "'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True"
+- template:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/start.sh"
    src: templates/qemu-start.sh.j2
    owner: "{{ kvm_machine.name }}"
