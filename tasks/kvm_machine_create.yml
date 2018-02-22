@@ -179,7 +179,7 @@
    group: "{{ kvm_machine.name }}"
    mode: "0640"
 - include_tasks: "resize_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['resize_type'] }}.yml"
-  when: kvm_zfs_clone_machine_result.changed and resize_type in kvm_images[kvm_machine.image][kvm_machine.image_version]
+  when: kvm_zfs_clone_machine_result.changed and 'resize_type' in kvm_images[kvm_machine.image][kvm_machine.image_version]
 - debug:
     msg: |
       lets see what we shall do...
