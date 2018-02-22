@@ -17,6 +17,12 @@
    owner: root
    group: root
    mode: "0755"
+- file:
+   dest: /etc/kvm_status
+   state: directory
+   owner: root
+   group: root
+   mode: "0755"
 - template:
    dest: /usr/local/bin/fdisk_max_partition.sh
    src: templates/fdisk_max_partition.sh.j2

@@ -1,7 +1,7 @@
 [Unit]
 Description=QEMU KVM {{ kvm_machine.name }} 
 After=network.target auditd.service
-ConditionPathExists={{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled
+ConditionPathExists=/etc/kvm_status/{{ kvm_machine.name }}.status.enabled
 PartOf=multi-user.target
 {% if 'vm_rollback_on_start' not in kvm_machine and kvm_machine.vm_rollback_on_start == True %} 
 Requires vm-{{ kvm_machine.name }}.socket

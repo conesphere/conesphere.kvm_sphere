@@ -180,12 +180,19 @@
    mode: "0640"
 - include_tasks: "resize_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['resize_type'] }}.yml"
   when: kvm_zfs_clone_machine_result.changed and resize_type in kvm_images[kvm_machine.image][kvm_machine.image_version]
+- debug:
+    msg: |
+      lets see what we shall do...
+      {{ kvm_machine.deploy_to[inventory_hostname]|to_nice_yaml() }}
+      ---
+      {{ kvm_machine.deploy_to|to_nice_yaml() }}
 - copy:
-   dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled"
+   dest: "/etc/kvm_status/{{ kvm_machine.name }}.status.enabled"
    content: ""
    owner: "{{ kvm_machine.name }}"
    group: "{{ kvm_machine.name }}"
    mode: "0444"
+  when: kvm_machine.deploy_to[inventory_hostname]['enable'] == 1
 - template:
    dest: "/etc/systemd/system/vm-{{ kvm_machine.name }}.service"
    src: templates/vm-systemd.service.j2
@@ -199,11 +206,13 @@
 #    owner: root
 #    group: root
 #    mode: "0644"
-#   when: "'systemd_listen_stream' in kvm_machine and kvm_machine.systemd_listen_stream == True"
+#   whlen: "'systemd_listen_stream' in kvm_machine and kvm_machine.systemd_listen_stream == True"
 - systemd:
    enabled: yes
    state: started
    daemon_reload: yes
    name: vm-{{ kvm_machine.name }}
-  when: kvm_start_service == 'yes'
+  when: 
+    - kvm_start_service == 'yes'
+    - kvm_machine.deploy_to[inventory_hostname]['enable'] == 1
 

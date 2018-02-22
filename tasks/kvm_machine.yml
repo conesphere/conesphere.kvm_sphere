@@ -34,6 +34,6 @@
 - include_tasks: exterminate_kvm_machine.yml
   vars:
     kvm_machine_name: "{{ kvm_machine.name }}"
-  when: kvm_machine.deploy_to[inventory_hostname] == "drop" or kvm_machine.deploy_to[inventory_hostname] == "exterminate" or  kvm_machine.deploy_to[inventory_hostname] == "start_fresh"
+  when: kvm_machine.deploy_to[inventory_hostname]["exterminate"] == 1 or  kvm_machine.deploy_to[inventory_hostname]["reinstall"] == 1 
 - include_tasks: kvm_machine_create.yml
-  when: kvm_machine.deploy_to[inventory_hostname] == "start" or kvm_machine.deploy_to[inventory_hostname] == "start_fresh"
+  when: kvm_machine.deploy_to[inventory_hostname]['setup'] == 1
