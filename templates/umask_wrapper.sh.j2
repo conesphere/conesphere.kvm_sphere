@@ -1,0 +1,5 @@
+#!/bin/bash
+UMASK="${1}"
+shift
+umask "${UMASK}" || exit $?
+"${@}"

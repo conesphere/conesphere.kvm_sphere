@@ -24,6 +24,12 @@
    group: root
    mode: "0755"
 - template:
+   dest: /usr/local/bin/umask_wrapper.sh
+   src: templates/umask_wrapper.sh.j2
+   owner: root
+   group: root
+   mode: "0755"
+- template:
    dest: /usr/local/bin/fdisk_max_partition.sh
    src: templates/fdisk_max_partition.sh.j2
    owner: root

@@ -70,13 +70,13 @@ fi
 	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/disk@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk || exit $?
 	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/kickoff@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff || exit $?
 	# TODO Insert looping for fs_ and disk_ here
-	{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}
-		sudo -u {{ kvm_machine.name }} qemu-system-x86_64 -cpu host -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
-	{% else %}
-		sudo -u {{ kvm_machine.name }} qemu-system-x86_64 -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
-	{% endif %}
-	# alternative here 
-	# xl create {{ kvm_image_root }}/{{ kvm_machine.name }}/xl.cfg
+	
+	sudo -u {{ kvm_machine.name }} \
+		{% if kvm_machine_spice_unix_access == True %}umask_wrapper.sh "007"{% endif %} qemu-system-x86_64 \
+		{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}-cpu host{% endif %} -no-reboot -net none \
+		-readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf \
+		{% if kvm_machine_spice_unix_access == True %}-soundhw hda{% endif %} {% if kvm_monitor != "vnc" %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
+	
 	zfs list "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}"
 	if [[ $? == 0 ]]
 	then
@@ -84,12 +84,9 @@ fi
 	fi
 	exit 0 
 {% else %}
-	{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}
-	qemu-system-x86_64 -cpu host -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
-	{% else %}
-	qemu-system-x86_64 -no-reboot -net none -readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf {% if kvm_machine_spice_addr %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
-	{% endif %}
-	# alternative here 
-	# xl create {{ kvm_image_root }}/{{ kvm_machine.name }}/xl.cfg
+	{% if kvm_machine_spice_unix_access == True %}umask_wrapper.sh "007"{% endif %} qemu-system-x86_64 \
+	{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}-cpu host{% endif %} -no-reboot -net none \
+	-readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf \
+	{% if kvm_machine_spice_unix_access == True %}-soundhw hda{% endif %} {% if kvm_monitor != "vnc" %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 {% endif %}
 
