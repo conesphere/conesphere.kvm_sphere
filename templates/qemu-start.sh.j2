@@ -42,6 +42,10 @@ then
 	fi
 fi
 
+{% if kvm_machine_spice_unix_access == True and kvm_machine_spice_unix == True %}
+	rm -f {{ kvm_machine_spice_addr }}
+{% endif %}
+		
 {% if 'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True %}
 	zfs list "{{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}@freeze"
 	if [[ $? != 0 ]]
@@ -72,7 +76,7 @@ fi
 	# TODO Insert looping for fs_ and disk_ here
 	
 	sudo -u {{ kvm_machine.name }} \
-		{% if kvm_machine_spice_unix_access == True %}umask_wrapper.sh "007"{% endif %} qemu-system-x86_64 \
+		qemu-system-x86_64 \
 		{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}-cpu host{% endif %} -no-reboot -net none \
 		-readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf \
 		{% if kvm_machine_spice_unix_access == True %}-soundhw hda{% endif %} {% if kvm_monitor != "vnc" %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
@@ -82,11 +86,27 @@ fi
 	then
 		nohup zfs destroy -R "{{ kvm_zfs_filesystem }}_off/{{ kvm_machine.name }}" &
 	fi
-	exit 0 
 {% else %}
-	{% if kvm_machine_spice_unix_access == True %}umask_wrapper.sh "007"{% endif %} qemu-system-x86_64 \
+	qemu-system-x86_64 \
 	{% if 'allow_nesting' in kvm_machine and kvm_machine.allow_nesting == True %}-cpu host{% endif %} -no-reboot -net none \
 	-readconfig {{ kvm_image_root }}/{{ kvm_machine.name }}/qemu.conf \
 	{% if kvm_machine_spice_unix_access == True %}-soundhw hda{% endif %} {% if kvm_monitor != "vnc" %}-spice addr="{{ kvm_machine_spice_addr }}"{% endif %} -daemonize
 {% endif %}
+
+{% if kvm_machine_spice_unix_access == True and kvm_machine_spice_unix == True %}
+# waitforsock
+KILLER=0
+while [[ ! -S {{ kvm_machine_spice_addr }} ]]
+do
+	KILLER=$((${KILLER}+1))
+	sleep 0.3
+	if [[ ${KILLER} -gt 30 ]]
+	then
+		echo "Damn socket is not ready in time"
+		exit 23
+	fi
+done
+chmod 770 {{ kvm_machine_spice_addr }}
+{% endif %}
+exit 0
 

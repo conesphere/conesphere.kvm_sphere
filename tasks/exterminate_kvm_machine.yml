@@ -18,10 +18,10 @@
   args:
     executable: /bin/bash
   shell: |
-    zfs list "{{ kvm_zfs_filesystem }}_frozen/{{ kvm_machine_name }}"
+    zfs list "{{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine_name }}"
     if [[ $? == 0 ]]
     then
-      zfs destroy -R "{{ kvm_zfs_filesystem }}_frozen/{{ kvm_machine_name }}"  || exit $?
+      zfs destroy -R "{{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine_name }}"  || exit $?
     fi
     exit 0
   when: "'vm_rollback_on_start' in kvm_machine and kvm_machine.vm_rollback_on_start == True"
