@@ -57,8 +57,25 @@
 [machine]
   accel = "{{ kvm_machine_accel_cur }}"
   firmware = "{{ kvm_firmware_root }}/{{ kvm_machine_firmware_type }}.firmware"
-  graphics = "off"
+{% if kvm_machine_graphics == False %}  graphics = "off"{% endif %}
+{% if 'usb_host' in kvm_machine %}  usb = "on"{% endif %}
 
+{% if kvm_machine_graphics == True %}
+[device]
+  driver = "{{ kvm_machine.graphics_driver|default('qxl-vga') }}"
+  ram_size = "{{ kvm_machine.graphics_ram_size|default('2048000') }}"
+  xres = "{{ kvm_machine.graphics_xres|default('1920') }}"
+  yres = "{{ kvm_machine.graphics_xres|default('1080') }}"
+
+{% endif %}
+{% for usb_host in kvm_machine.usb_host %}
+[device]
+  driver = "usb-host"
+{% for k in usb_host.keys() %}
+  {{ k }} = "{{ usb_host[k] }}"
+{% endfor %}
+
+{% endfor %}
 [memory]
   size = "{{ kvm_machine.memory|default('1024') }}"
 
@@ -70,9 +87,26 @@
   vnc = "unix:/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.vnc.S"
 
 {% else %}
+[chardev "vdagent"]
+  backend = "spicevmc"
+  debug = "0"
+  name = "vdagent"
+
+[device]
+  driver = "virtio-serial"
+
+[device]
+  driver = "virtserialport"
+  chardev = "vdagent"
+  name = "com.redhat.spice.0"
+
 [spice]
   addr = "{{ kvm_machine_spice_addr }}"
-  port = "{{ kvm_machine_spice_port }}"
-  password = "{{ kvm_machine_spice_password }}"
+{% if kvm_machine_spice_disable_ticketing == False %}  password = "{{ kvm_machine_spice_password }}"{% endif %}
+{% if kvm_machine_spice_unix == True %}  unix = "on"{% endif %}
+{% if kvm_machine_spice_unix == False %}  port = "{{ kvm_machine_spice_port }}"{% endif %}
+{% if kvm_machine_spice_disable_ticketing == True %}  disable-ticketing = "on"{% endif %}
+{% if kvm_machine_spice_disable_agent_file_xfer == True %}  disable-agent-file-xfer = "on"{% endif %}
+{% if kvm_machine_spice_disable_copy_paste == True %}  disable-copy-paste = "on"{% endif %}
 
 {% endif %}

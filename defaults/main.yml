@@ -19,6 +19,9 @@ kvm_default_niceness: '-16'
 # a virtual machine must not be nice at all 
 kvm_default_drive_if: 'virtio'
 
+# use nographics
+kvm_default_graphics: False
+
 #whether to start kvm systemd service 
 kvm_start_service: 'yes'
 

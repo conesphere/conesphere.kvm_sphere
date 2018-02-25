@@ -14,12 +14,17 @@
   set_fact:
     kvm_machine_uid: "{{ kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int) }}"
     kvm_machine_spice_password: "{{ kvm_spice_passwords[kvm_machine.name]|default(kvm_default_spice_password|default('ToLazyToConfigureASpicePassword')) }}"
+    kvm_machine_spice_unix: "{{ kvm_machine.spice_unix|default(kvm_default_spice_unix|default(False)) }}"
+    kvm_machine_spice_disable_ticketing: "{{ kvm_machine.spice_disable_ticketing|default(kvm_default_spice_disable_ticketing|default(False)) }}"
+    kvm_machine_spice_disable_agent_file_xfer: "{{ kvm_machine.spice_disable_agent_file_xfer|default(kvm_default_spice_disable_agent_file_xfer|default(True)) }}"
+    kvm_machine_spice_disable_copy_paste: "{{ kvm_machine.spice_disable_copy_paste|default(kvm_default_spice_disable_copy_paste|default(True)) }}"
     kvm_machine_spice_addr: "{{ kvm_machine.spice_addr|default(kvm_default_spice_addr|default('::1')) }}"
     kvm_machine_spice_port: "{{ kvm_machine.spice_port|default(kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int)) }}"
     kvm_machine_firmware_type: "{{ kvm_machine.firmware|default(kvm_images[kvm_machine.image][kvm_machine.image_version]['firmware']|default(kvm_default_firmware)) }}"
     kvm_machine_accel_cur: "{{ kvm_machine.accel|default(kvm_machine_accel[kvm_machine.name]|default(kvm_default_accel|default('kvm'))) }}"
     kvm_machine_niceness: "{{ kvm_machine.niceness|default(kvm_default_niceness|default('-16')) }}"
     kvm_machine_drive_if: "{{ kvm_machine.drive_if|default(kvm_default_drive_if|default('virtio')) }}"
+    kvm_machine_graphics: "{{ kvm_machine.graphics|default(kvm_default_graphics|default(False)) }}"
 - fail:
     msg: |
       Uid {{ kvm_machine_uid }} is not unique or Name {{ kvm_machine.name }} is not unique. 
