@@ -74,6 +74,12 @@ fi
 	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/disk@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk || exit $?
 	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/kickoff@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/kickoff || exit $?
 	# TODO Insert looping for fs_ and disk_ here
+{% for drive in kvm_machine.disks|default([]) %}
+	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/disk_{{ drive.name }}@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ drive.name }} || exit $?
+{% endfor %}
+{% for filesystem in kvm_machine.filesystems|default([]) %}
+	zfs clone -p {{ kvm_zfs_filesystem }}_freeze/{{ kvm_machine.name }}/fs_{{ filesystem.name }}@freeze {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk_{{ filesystem.name }} || exit $?
+{% endfor %}
 	
 	sudo -u {{ kvm_machine.name }} \
 		qemu-system-x86_64 \
