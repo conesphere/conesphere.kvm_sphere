@@ -16,6 +16,7 @@
     name: "{{ kvm_machine.name }}"
     gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
     state: "present"
+# todo: make additional usergroups configurable 
 - user:
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
