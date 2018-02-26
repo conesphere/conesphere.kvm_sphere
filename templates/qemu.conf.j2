@@ -58,7 +58,18 @@
   accel = "{{ kvm_machine_accel_cur }}"
   firmware = "{{ kvm_firmware_root }}/{{ kvm_machine_firmware_type }}.firmware"
   graphics = "off"
+{% if 'usb_host' in kvm_machine %}  usb = "on"
+{% endif %}
 
+{% if 'usb_host' in kvm_machine %}
+{% for usb_host in kvm_machine.usb_host %}
+[device]
+  driver = "usb-host"
+{% for k in usb_host.keys() %}  {{ k }} = "{{ usb_host[k] }}"
+{% endfor %}
+
+{% endfor %}
+{% endif %}
 [memory]
   size = "{{ kvm_machine.memory|default('1024') }}"
 
