@@ -20,7 +20,10 @@
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
     uid: "{{ kvm_machine_uid }}"
-    groups: kvm
+    groups: 
+     - kvm
+     # the root group should be temporary TODO
+     - root
     state: "present"
     createhome: "no"
     shell: "/bin/bash"
@@ -193,6 +196,10 @@
    group: "{{ kvm_machine.name }}"
    mode: "0444"
   when: kvm_machine.deploy_to[inventory_hostname]['enable'] == 1
+- file:
+   dest: "/etc/kvm_status/{{ kvm_machine.name }}.status.enabled"
+   state: absent
+  when: kvm_machine.deploy_to[inventory_hostname]['enable'] == 0
 - template:
    dest: "/etc/systemd/system/vm-{{ kvm_machine.name }}.service"
    src: templates/vm-systemd.service.j2
@@ -215,4 +222,12 @@
   when: 
     - kvm_start_service == 'yes'
     - kvm_machine.deploy_to[inventory_hostname]['enable'] == 1
+- systemd:
+   enabled: yes
+   state: stopped
+   daemon_reload: yes
+   name: vm-{{ kvm_machine.name }}
+  when: 
+    - kvm_start_service == 'yes'
+    - kvm_machine.deploy_to[inventory_hostname]['enable'] == 0
 

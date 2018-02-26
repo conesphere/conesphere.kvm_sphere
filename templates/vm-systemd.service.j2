@@ -25,9 +25,9 @@ TimeoutStopSec=60s
 TimeoutStartSec=300s
 {% else %}
 KillMode=control-group
-Restart=on-failure
-RestartSec=3s
-TimeoutStopSec=3s
+Restart=always
+RestartSec=2s
+TimeoutStopSec=2s
 TimeoutStartSec=infinity
 {% endif %}
 Type=forking
