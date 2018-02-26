@@ -7,7 +7,7 @@
     - qemu-kvm
     - pigz
     - parted
-    - fdisk
+    - util-linux
     - socat
     - ovmf
     - dosfstools
