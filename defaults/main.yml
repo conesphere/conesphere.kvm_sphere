@@ -14,9 +14,6 @@ kvm_firmware_root: "/etc/kvm_firmware"
 kvm_machine_accel: {}
 
 # a virtual machine must not be nice at all 
-kvm_default_niceness: '-16'
-
-# a virtual machine must not be nice at all 
 kvm_default_drive_if: 'virtio'
 
 # use nographics
@@ -28,6 +25,11 @@ kvm_start_service: 'yes'
 # use list of all bridge interfaces from network 
 # config by default
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
+
+# setup management bridge vars
+#kvm_management_bridge_name: "kvm"
+#kvm_management_bridge_network: fd4c:0e16:4048:6752::
+#kvm_management_bridge_netmask: 64
 
 # usage: 
 # kvm_spice_passwords: 
@@ -51,8 +53,8 @@ kvm_firmware:
 
 kvm_default_firmware: "ovmf_2018022300"
 
+# kvm_monitor defaults to spice, may be changed to kvm if thats better
 kvm_monitor: "spice"
-kvm_spice_addr: "192.168.1.10"
 
 # empty default for kvm machines 
 kvm_machines: []

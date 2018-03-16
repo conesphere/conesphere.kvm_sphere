@@ -24,7 +24,6 @@
     kvm_machine_soundhw: "{{ kvm_machine.soundhw|default(kvm_default_soundhw|default(False)) }}"
     kvm_machine_firmware_type: "{{ kvm_machine.firmware|default(kvm_images[kvm_machine.image][kvm_machine.image_version]['firmware']|default(kvm_default_firmware)) }}"
     kvm_machine_accel_cur: "{{ kvm_machine.accel|default(kvm_machine_accel[kvm_machine.name]|default(kvm_default_accel|default('kvm'))) }}"
-    kvm_machine_niceness: "{{ kvm_machine.niceness|default(kvm_default_niceness|default('-16')) }}"
     kvm_machine_drive_if: "{{ kvm_machine.drive_if|default(kvm_default_drive_if|default('virtio')) }}"
     kvm_machine_graphics: "{{ kvm_machine.graphics|default(kvm_default_graphics|default(False)) }}"
 - fail:
