@@ -27,9 +27,9 @@ kvm_start_service: 'yes'
 kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 
 # setup management bridge vars
-#kvm_management_bridge_name: "kvm"
-#kvm_management_bridge_network: fd4c:0e16:4048:6752::
-#kvm_management_bridge_netmask: 64
+kvm_management_bridge_name: "kvm"
+kvm_management_bridge_network: "fd4c:0e16:4048:6752::"
+kvm_management_bridge_netmask: 64
 
 # usage: 
 # kvm_spice_passwords: 

@@ -37,15 +37,15 @@
   path = "/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S"
   wait = "off"
 
-{% for bridge in kvm_machine.bridge %}
-{% set macbase=[bridge.guest, kvm_machine.name]|join('@')|checksum %}
+{% for bridge in kvm_machine.interfaces %}
+{% set macbase=[bridge.name, kvm_machine.name]|join('@')|checksum %}
 [device]
   driver = "virtio-net-pci"
-  netdev = "{{ bridge.guest }}"
-  addr = "{{ '%x'|format(bridge.guest|regex_replace('^e..','')|int) }}"
+  netdev = "{{ bridge.name }}"
+  addr = "{{ '%x'|format(bridge.name|regex_replace('^e..','')|int) }}"
   mac = "{{ bridge.mac|default(['52', '54', '00', macbase[0:2], macbase[2:4], macbase[4:6]]|join(':')) }}"
 
-[netdev "{{ bridge.guest }}"]
+[netdev "{{ bridge.name }}"]
   type = "bridge"
   br = "{{ bridge.host }}"
 
