@@ -20,6 +20,7 @@
     kvm_machine_accel_cur: "{{ kvm_machine.accel|default(kvm_machine_accel[kvm_machine.name]|default(kvm_default_accel|default('kvm'))) }}"
     kvm_machine_niceness: "{{ kvm_machine.niceness|default(kvm_default_niceness|default('-16')) }}"
     kvm_machine_drive_if: "{{ kvm_machine.drive_if|default(kvm_default_drive_if|default('virtio')) }}"
+    kvm_machine_admin_port: "{{ kvm_machine.admin_port|default(kvm_images[kvm_machine.image][kvm_machine.image_version]['admin_port']|default(kvm_default_admin_port|default('22'))) }}"
 - fail:
     msg: |
       Uid {{ kvm_machine_uid }} is not unique or Name {{ kvm_machine.name }} is not unique. 
