@@ -37,6 +37,7 @@
   path = "/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S"
   wait = "off"
 
+{% if kvm_machine_admin_net %}
 [device]
   driver = "virtio-net-pci"
   addr = "9"
@@ -50,6 +51,7 @@
 {% for k in kvm_guestfwd %}  guestfwd = "{{ k }}"
 {% endfor %}
 
+{% endif %}
 {% for bridge in kvm_machine.bridge %}
 {% set macbase=[bridge.guest, kvm_machine.name]|join('@')|checksum %}
 [device]
