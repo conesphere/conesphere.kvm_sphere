@@ -37,7 +37,7 @@
   path = "/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S"
   wait = "off"
 
-{% if kvm_machine_admin_net %}
+{% if 'admin_net' in kvm_machine and kvm_machine.admin_net == True %}
 [device]
   driver = "virtio-net-pci"
   addr = "9"
