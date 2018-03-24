@@ -1,7 +1,8 @@
 #!/usr/lib/fw-lib.sh
 
-iptables -A FORWARDING -j REJECT
-ip6tables -A FORWARDING -j REJECT
+iptables -I FORWARD -i nat64 -s 10.174.42.0/24 -d 127.0.0.1/32 -j ACCEPT
+iptables -A FORWARD -j REJECT
+ip6tables -A FORWARD -j REJECT
 
 echo 1 > /proc/sys/net/ipv4/ip_forwarding
 echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
