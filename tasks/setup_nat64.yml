@@ -29,4 +29,13 @@
     chdir: /root/iptables-firewall
     executable: /bin/bash
   when: git_clone_iptables_firewall.changed
+- template:
+   dest: /etc/fw_rules.d/kvm_sphere
+   src: templates/kvm_sphere_firewall.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: firewall_service_restart
+- name: bring up tayga and iptables immidiately
+  meta: flush_handlers
 
