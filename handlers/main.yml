@@ -1,2 +1,16 @@
 ---
 # handlers file for conesphere.kvm.manager
+- name: firewall_service_restart
+  systemd:
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+    name: firewall
+
+- name: tayga_service_restart
+  systemd:
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+    name: firewall
+
