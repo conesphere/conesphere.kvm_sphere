@@ -47,7 +47,7 @@
   type = "user"
   hostname = "{{ kvm_machine.name }}"
   restrict = "yes"
-  hostfwd = "tcp:127.0.0.1:{{ kvm_machine_uid }}-:{{ kvm_machine_admin_port }}"
+  hostfwd = "tcp:127.0.0.1:{{ kvm_machine_uid|int+1 }}-:{{ kvm_machine_admin_port }}"
 {% for k in kvm_guestfwd %}  guestfwd = "{{ k }}"
 {% endfor %}
 
