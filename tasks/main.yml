@@ -11,6 +11,7 @@
     - socat
     - ovmf
     - dosfstools
+- import_tasks: setup_nat64.yml
 - file:
    dest: /usr/local/bin
    state: directory

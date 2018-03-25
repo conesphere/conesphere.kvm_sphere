@@ -21,10 +21,7 @@
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
     uid: "{{ kvm_machine_uid }}"
-    groups: 
-     - kvm
-     # the root group should be temporary TODO
-     - root
+    groups: "{{ ['kvm', kvm_machine.groups|default([])|join(',')]|join(',') }}"
     state: "present"
     createhome: "no"
     shell: "/bin/bash"
@@ -215,6 +212,13 @@
 #    group: root
 #    mode: "0644"
 #   whlen: "'systemd_listen_stream' in kvm_machine and kvm_machine.systemd_listen_stream == True"
+- template:
+   dest: "/etc/fw_rules.d/vm_{{ kvm_machine.name }}"
+   src: templates/qemu-firewall.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: firewall_service_restart
 - systemd:
    enabled: yes
    state: started

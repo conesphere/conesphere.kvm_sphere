@@ -22,6 +22,7 @@
     kvm_machine_spice_addr: "{{ kvm_machine.spice_addr|default(kvm_default_spice_addr|default('::1')) }}"
     kvm_machine_spice_port: "{{ kvm_machine.spice_port|default(kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int)) }}"
     kvm_machine_soundhw: "{{ kvm_machine.soundhw|default(kvm_default_soundhw|default(False)) }}"
+    kvm_machine_ext_ports: "{{ kvm_machine.ext_ports|default(kvm_machine_default_ext_ports|default({})) }}"
     kvm_machine_firmware_type: "{{ kvm_machine.firmware|default(kvm_images[kvm_machine.image][kvm_machine.image_version]['firmware']|default(kvm_default_firmware)) }}"
     kvm_machine_accel_cur: "{{ kvm_machine.accel|default(kvm_machine_accel[kvm_machine.name]|default(kvm_default_accel|default('kvm'))) }}"
     kvm_machine_drive_if: "{{ kvm_machine.drive_if|default(kvm_default_drive_if|default('virtio')) }}"
@@ -29,13 +30,36 @@
     kvm_machine_admin_port: "{{ kvm_machine.admin_port|default(kvm_images[kvm_machine.image][kvm_machine.image_version]['admin_port']|default(kvm_default_admin_port|default('22'))) }}"
 - fail:
     msg: |
-      Uid {{ kvm_machine_uid }} is not unique or Name {{ kvm_machine.name }} is not unique. 
+      The Name {{ kvm_machine.name }} is not unique, try a different one. 
+  when: kvm_machine.name in kvm_unique_name
+- fail:
+    msg: |
+      Uid {{ item }} is not unique 
+      every machine needs a space of +5 uids, to get free tcp ports to patch admin services to the VM. 
       If two hostnames lead to the same uid try defining a different uid in the machine config.
-  when: kvm_machine_uid in kvm_unique_uid or kvm_machine.name in kvm_unique_name
-- name: set unique values
+      The current uid of this vm would have been {{ kvm_machine_uid }} which is already been taken by 
+      {{ kvm_unique_uid[item] }}
+  when: item in kvm_unique_uid
+  with_items: 
+    - "{{ kvm_machine_uid }}"
+    - "{{ kvm_machine_uid|int(0, 10)+1 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+2 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+3 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+4 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+5 }}"
+- name: set unique name
   set_fact: 
-    kvm_unique_uid: "{{ kvm_unique_uid }} {{ kvm_machine_uid }}={{ kvm_machine.name }}"
     kvm_unique_name: "{{ kvm_unique_name }} {{ kvm_machine.name }}={{ kvm_machine_uid }}"
+- name: set unique uid values
+  set_fact: 
+    kvm_unique_uid: "{{ kvm_unique_uid }} {{ item }}={{ kvm_machine.name }}"
+  with_items: 
+    - "{{ kvm_machine_uid }}"
+    - "{{ kvm_machine_uid|int(0, 10)+1 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+2 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+3 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+4 }}"
+    - "{{ kvm_machine_uid|int(0, 10)+5 }}"
 - include_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
 - include_tasks: exterminate_kvm_machine.yml

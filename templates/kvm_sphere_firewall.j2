@@ -1,0 +1,8 @@
+#!/usr/lib/fw-lib.sh
+
+iptables -A FORWARD -j REJECT
+ip6tables -A FORWARD -j REJECT
+
+echo 1 > /proc/sys/net/ipv4/ip_forwarding
+echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+

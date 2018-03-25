@@ -38,7 +38,17 @@ kvm_management_bridge_netmask: 64
 #
 kvm_spice_passwords: {}
 kvm_default_spice_password: "ToLazyToConfigureASpicePassword"
-kvm_default_spice_addr: "::1"
+kvm_default_spice_addr: "::1" 
+kvm_monitor: "spice"
+
+# usage: 
+#   normally all usernet and qemu/spice ports on the host are 
+#   opened on loopback but there are reasons why those need to 
+#   be exposed to the "outside" world of the metal
+#   I still dont know exactly how to looop through that so 
+#   i might do it staticly for the moment 
+kvm_machine_default_ext_ports: 
+  '1': True
 
 # BIOS NAME --> Firmware File
 kvm_firmware:
@@ -52,9 +62,6 @@ kvm_firmware:
     chksum: 'sha256:13cd3bb7e5468920bcb2877cf530d0c7a56e96b6fb88a4b95f91346ff576501a'
 
 kvm_default_firmware: "ovmf_2018022300"
-
-# kvm_monitor defaults to spice, may be changed to kvm if thats better
-kvm_monitor: "spice"
 
 # empty default for kvm machines 
 kvm_machines: []
