@@ -186,6 +186,13 @@
    owner: root
    group: root
    mode: "0644"
+- template:
+   dest: "/etc/fw_rules.d/vm_{{ kvm_machine.name }}"
+   src: templates/qemu-firewall.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: firewall_service_restart
 - systemd:
    enabled: yes
    state: started
