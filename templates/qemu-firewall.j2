@@ -1,0 +1,10 @@
+#!/usr/lib/fw-lib.sh
+
+require kvm_sphere
+
+ip6tables -t nat -I PREROUTING -p tcp --dport {{ item.port }} -j DNAT --to-destination fd46:2c40:5b62:1265::aae:867f
+ip6tables -I FORWARD -p tcp --dport {{ item.port }} -d fd46:2c40:5b62:1265::aae:867f/128 -j ACCEPT
+
+iptables -t nat -I PREROUTING -p tcp --dport {{ item.port }} -j DNAT --to-destination 10.174.134.127
+iptables -I FORWARD -p tcp --dport {{ item.port }} -d 10.174.134.127/32 -j ACCEPT
+

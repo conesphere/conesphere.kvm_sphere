@@ -1,6 +1,5 @@
 #!/usr/lib/fw-lib.sh
 
-iptables -I FORWARD -i nat64 -s 10.174.42.0/24 -d 127.0.0.1/32 -j ACCEPT
 iptables -A FORWARD -j REJECT
 ip6tables -A FORWARD -j REJECT
 

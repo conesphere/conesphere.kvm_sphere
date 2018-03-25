@@ -1,4 +1,11 @@
 ---
+- apt: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - tayga
+    - rinetd
 - template:
    dest: /etc/tayga.conf
    src: templates/etc-tayga.conf.j2
@@ -36,6 +43,15 @@
    group: root
    mode: "0755"
   notify: firewall_service_restart
+- name: bring up tayga and iptables immidiately
+  meta: flush_handlers
+- template:
+   dest: /etc/rinetd.conf
+   src: templates/etc-rinetd.conf.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: rinetd_service_restart
 - name: bring up tayga and iptables immidiately
   meta: flush_handlers
 

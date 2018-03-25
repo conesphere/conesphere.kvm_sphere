@@ -12,5 +12,12 @@
     enabled: yes
     state: restarted
     daemon_reload: yes
-    name: firewall
+    name: tayga
+
+- name: rinetd_service_restart
+  systemd:
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+    name: rinetd
 

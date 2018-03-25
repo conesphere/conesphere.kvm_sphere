@@ -1,0 +1,36 @@
+#
+# this is the configuration file for rinetd, the internet redirection server
+#
+# you may specify global allow and deny rules here
+# only ip addresses are matched, hostnames cannot be specified here
+# the wildcards you may use are * and ?
+#
+# allow 192.168.2.*
+# deny 192.168.2.1?
+
+#
+# forwarding rules come here
+#
+# you may specify allow and deny rules after a specific forwarding rule
+# to apply to only that forwarding rule
+#
+# bindadress    bindport  connectaddress  connectport
+{% for kvm_machine in kvm_machines|default([]) %}
+{% set kvm_machine_tmp_chks=kvm_machine.name|checksum %}
+{% set kvm_machine_tmp_chkb=((kvm_machine_tmp_chks[5:6]|int(0, 16)/3.2)+1)|int|string %}
+{% set kvm_machine_tmp_chkd=kvm_machine_tmp_chks[0:4]|int(0, 16)|string %}
+{% set kvm_machine_uid=kvm_machine.uid|default([kvm_machine_tmp_chkb[0:1], '0000']|join|int + kvm_machine_tmp_chkd[-4:]|int) %}
+10.174.134.127 {{ kvm_machine_uid }} 127.0.0.1 {{ kvm_machine_uid }}
+10.174.134.127 {{ kvm_machine_uid|int(0, 10)+1 }} 127.0.0.1 {{ kvm_machine_uid|int(0, 10)+1 }}
+10.174.134.127 {{ kvm_machine_uid|int(0, 10)+2 }} 127.0.0.1 {{ kvm_machine_uid|int(0, 10)+2 }}
+10.174.134.127 {{ kvm_machine_uid|int(0, 10)+3 }} 127.0.0.1 {{ kvm_machine_uid|int(0, 10)+3 }}
+10.174.134.127 {{ kvm_machine_uid|int(0, 10)+4 }} 127.0.0.1 {{ kvm_machine_uid|int(0, 10)+4 }}
+10.174.134.127 {{ kvm_machine_uid|int(0, 10)+5 }} 127.0.0.1 {{ kvm_machine_uid|int(0, 10)+5 }}
+{% endfor %}
+
+
+# logging information
+logfile /var/log/rinetd.log
+
+# uncomment the following line if you want web-server style logfile format
+# logcommon

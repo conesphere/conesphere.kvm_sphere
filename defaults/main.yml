@@ -34,6 +34,8 @@ kvm_allowed_bridge_if: "{{ network_interfaces.bridge|default([]) }}"
 kvm_spice_passwords: {}
 kvm_default_spice_password: "ToLazyToConfigureASpicePassword"
 kvm_default_spice_addr: "::1"
+kvm_monitor: "spice"
+kvm_spice_addr: "10.174.134.127"
 
 # BIOS NAME --> Firmware File
 kvm_firmware:
@@ -47,9 +49,6 @@ kvm_firmware:
     chksum: 'sha256:13cd3bb7e5468920bcb2877cf530d0c7a56e96b6fb88a4b95f91346ff576501a'
 
 kvm_default_firmware: "ovmf_2018022300"
-
-kvm_monitor: "spice"
-kvm_spice_addr: "192.168.1.10"
 
 # empty default for kvm machines 
 kvm_machines: []
