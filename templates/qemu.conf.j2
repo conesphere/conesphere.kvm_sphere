@@ -124,7 +124,16 @@
 {% endif %}
 {% if kvm_machine_spice_unix == True %}  unix = "on"
 {% endif %}
+{% if kvm_machine_spice_tls == True %}  tls-port = "{{ kvm_machine_spice_port }}"
+   x509-dir = "{{ kvm_machine_spice_x509_dir }}"
+   x509-key-file = "{{ kvm_machine_spice_x509_key_file }}"
+   x509-cert-file = "{{ kvm_machine_spice_x509_cert_file }}"
+   x509-cacert-file = "{{ kvm_machine_spice_x509_cacert_file }}"
+{% if kvm_machine_spice_x509_dh_key_file != "none" %}  x509-dh-key-file = "{{ kvm_machine_spice_x509_dh_key_file }}"
+{% endif %}
+{% else %}
 {% if kvm_machine_spice_unix == False %}  port = "{{ kvm_machine_spice_port }}"
+{% endif %}
 {% endif %}
 {% if kvm_machine_spice_disable_ticketing == True %}  disable-ticketing = "on"
 {% endif %}
