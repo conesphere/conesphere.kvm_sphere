@@ -7,4 +7,4 @@ allow {{ iface.name|default(iface) }}
 {% if iface.bridge is defined and iface.bridge == True %}allow {{ iface.name }}
 {% endif %}
 {% endfor %}
-{% endif }
+{% endif %}
