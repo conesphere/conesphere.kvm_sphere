@@ -109,7 +109,7 @@ kvm_images:
     'v0004':
       require: ['v0003']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_uefi_amd64.v0004.gz'
-      chksum: 'sha256:1f12bb685876062be2cf739cac0a8e277677c7d550b64d8dcfbc976009950979'
+      chksum: 'sha256:c733124227331cefee8e21fd8c737653827f2840da80401127c45065cd7d49ec'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
   'CS_Debian_Stretch_9.3_uefi_amd64':
@@ -121,7 +121,7 @@ kvm_images:
     'v0003':
       require: ['v0002']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_uefi_amd64.v0003.gz'
-      chksum: 'sha256:d3746d2394f37a757a5a9157c692626ba8de8e48a8e7aed950f9656229b97f41'
+      chksum: 'sha256:87406c926bec3e4dae5d93f1ce27dc760ba15300a3972288ad2dbfaf60f167c7'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
 
