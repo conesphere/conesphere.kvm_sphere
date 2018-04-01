@@ -1,6 +1,9 @@
 ---
 - include_tasks: kvm_image_version.yml
-  with_dict: "{{ kvm_image.value }}"
   loop_control:
     loop_var: kvm_image_version
+  with_items: "{{ kvm_images[kvm_image_name][kvm_image_version]['require']|default([]) }}"
+- include_tasks: kvm_image_version.yml
+  vars:
+    kvm_image_version: "{{ kvm_machine_latest_version }}"
 

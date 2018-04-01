@@ -92,9 +92,9 @@
   changed_when: False
   failed_when: False
 - name: download image 
-  include_tasks: kvm_image_version.yml
+  include_tasks: kvm_image.yml
   vars:
-    kvm_image_version: "{{ kvm_machine.image_version }}"
+    kvm_image_latest_version: "{{ kvm_machine.image_version }}"
     kvm_image_name: "{{ kvm_machine.image }}"
   when: kvm_check_image_available.rc != 0
 - name: clone_vm_image

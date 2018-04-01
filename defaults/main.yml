@@ -83,6 +83,10 @@ kvm_machine_exterminate: []
 # a kickstart script then adds remote access and networking and cycles hostname and 
 # ssh keys 
 #
+# note that require must be a list of all the base versions that did lead to this 
+#  particular version in the right order. Best idea is to just jinja2 it together: 
+#   require: {{ kvm_images['foo']['version']['require'] + ['version'] }} 
+#
 kvm_images:
   'CS_Debian_Stretch_9.3.nesting_amd64':
     'v0001':
@@ -103,6 +107,7 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0004':
+      require: ['v0003']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_uefi_amd64.v0004.gz'
       chksum: 'sha256:1f12bb685876062be2cf739cac0a8e277677c7d550b64d8dcfbc976009950979'
       resize_type: debian_gpt_uefi
@@ -114,6 +119,7 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0003':
+      require: ['v0002']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_uefi_amd64.v0003.gz'
       chksum: 'sha256:d3746d2394f37a757a5a9157c692626ba8de8e48a8e7aed950f9656229b97f41'
       resize_type: debian_gpt_uefi
