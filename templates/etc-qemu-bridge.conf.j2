@@ -1,3 +1,10 @@
 {% for iface in kvm_allowed_bridge_if %}
 allow {{ iface.name|default(iface) }}
 {% endfor %}
+{# next one is to automatically add vxlan bridges as defined in network_interfaces role #}
+{% if 'vxlan' in network_interfaces %}
+{% for iface in network_interfaces.vxlan %}
+{% if iface.bridge is defined and iface.bridge == True %}allow {{ iface.name }}
+{% endif %}
+{% endfor %}
+{% endif %}

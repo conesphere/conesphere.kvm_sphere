@@ -37,6 +37,21 @@
   path = "/tmp/{{ kvm_machine.name }}-kvm/{{ kvm_machine.name }}.monitor.S"
   wait = "off"
 
+{% if 'admin_net' not in kvm_machine or kvm_machine.admin_net == True %}
+[device]
+  driver = "virtio-net-pci"
+  addr = "9"
+  netdev = "admin0"
+
+[netdev "admin0"]
+  type = "user"
+  hostname = "{{ kvm_machine.name }}"
+  restrict = "yes"
+  hostfwd = "tcp:127.0.0.1:{{ kvm_machine_uid|int+1 }}-:{{ kvm_machine_admin_port }}"
+{% for k in kvm_guestfwd %}  guestfwd = "{{ k }}"
+{% endfor %}
+
+{% endif %}
 {% for bridge in kvm_machine.bridge %}
 {% set macbase=[bridge.guest, kvm_machine.name]|join('@')|checksum %}
 [device]

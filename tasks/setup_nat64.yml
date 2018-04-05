@@ -1,0 +1,57 @@
+---
+- apt: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - tayga
+    - rinetd
+- template:
+   dest: /etc/tayga.conf
+   src: templates/etc-tayga.conf.j2
+   owner: root
+   group: root
+   mode: "0644"
+  notify: tayga_service_restart
+- template:
+   dest: /etc/default/tayga
+   src: templates/etc-default-tayga.j2
+   owner: root
+   group: root
+   mode: "0644"
+  notify: tayga_service_restart
+# we do need firewalling, so the best idea is to install iptables-firewall.git 
+# this should already be installed from conesphere.debian.base but in case this 
+# role is not used it will be installed here, too. 
+- name: clone iptables firewall
+  git:
+   repo: 'https://github.com/zem/iptables-firewall.git'
+   dest: /root/iptables-firewall
+   update: no
+  register: git_clone_iptables_firewall
+- name: install iptables firewall 
+  shell: |
+    ./install.sh
+  args:
+    chdir: /root/iptables-firewall
+    executable: /bin/bash
+  when: git_clone_iptables_firewall.changed
+- template:
+   dest: /etc/fw_rules.d/kvm_sphere
+   src: templates/kvm_sphere_firewall.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: firewall_service_restart
+- name: bring up tayga and iptables immidiately
+  meta: flush_handlers
+- template:
+   dest: /etc/rinetd.conf
+   src: templates/etc-rinetd.conf.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: rinetd_service_restart
+- name: bring up tayga and iptables immidiately
+  meta: flush_handlers
+

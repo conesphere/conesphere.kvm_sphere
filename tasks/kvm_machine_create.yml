@@ -21,10 +21,7 @@
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
     uid: "{{ kvm_machine_uid }}"
-    groups: 
-     - kvm
-     # the root group should be temporary TODO
-     - root
+    groups: "{{ ['kvm', kvm_machine.groups|default(['root'])|join(',')]|join(',') }}"
     state: "present"
     createhome: "no"
     shell: "/bin/bash"
@@ -95,9 +92,9 @@
   changed_when: False
   failed_when: False
 - name: download image 
-  include_tasks: kvm_image_version.yml
+  include_tasks: kvm_image.yml
   vars:
-    kvm_image_version: "{{ kvm_machine.image_version }}"
+    kvm_image_latest_version: "{{ kvm_machine.image_version }}"
     kvm_image_name: "{{ kvm_machine.image }}"
   when: kvm_check_image_available.rc != 0
 - name: clone_vm_image
@@ -207,14 +204,13 @@
    owner: root
    group: root
    mode: "0644"
-# Systemd socket handover requires a user coded service, so it wont work for us
-# - template:
-#    dest: "/etc/systemd/system/vm-{{ kvm_machine.name }}.socket"
-#    src: templates/vm-systemd.socket.j2
-#    owner: root
-#    group: root
-#    mode: "0644"
-#   whlen: "'systemd_listen_stream' in kvm_machine and kvm_machine.systemd_listen_stream == True"
+- template:
+   dest: "/etc/fw_rules.d/vm_{{ kvm_machine.name }}"
+   src: templates/qemu-firewall.j2
+   owner: root
+   group: root
+   mode: "0755"
+  notify: firewall_service_restart
 - systemd:
    enabled: yes
    state: started
