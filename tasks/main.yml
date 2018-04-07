@@ -18,6 +18,16 @@
    owner: root
    group: root
    mode: "0755"
+- copy:
+   src: "files/zfspull/{{ item }}"
+   dest: "/usr/local/bin/{{ item }}"
+   owner: root
+   group: root
+   mode: "0755"
+  with_items:
+    - zfs-pull.sh
+    - zfs-pull-server.sh
+    - zfs-pull-server-sshcmd.sh
 - template:
    dest: /usr/local/bin/fdisk_max_partition.sh
    src: templates/fdisk_max_partition.sh.j2
