@@ -18,7 +18,15 @@
    owner: root
    group: root
    mode: "0755"
-- copy:
+- name: create exports directory for zfs transmission 
+  file:
+   dest: /etc/zfs-pull-exports
+   state: directory
+   owner: root
+   group: root
+   mode: "0755"
+- name: copy zfs transfer tools
+  copy:
    src: "files/zfspull/{{ item }}"
    dest: "/usr/local/bin/{{ item }}"
    owner: root
