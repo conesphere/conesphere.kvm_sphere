@@ -16,7 +16,6 @@
     name: "{{ kvm_machine.name }}"
     gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
     state: "present"
-# todo: make additional usergroups configurable 
 - user:
     name: "{{ kvm_machine.name }}"
     group: "{{ kvm_machine.name }}"
@@ -35,6 +34,14 @@
     name: udev
     state: restarted
   when: kvm_user_added.changed
+- name: allow zfs pull export
+  copy:
+    # this is not a complete way to reverse engeneer systemd-escape bit it might hopefully do for most pathes 
+    dest: "/etc/zfs-pull-exports/{{ [kvm_zfs_filesystem, kvm_machine.name]|join('|')|regex_replace('^/', '')|regex_replace('-', '\\x2d')|regex_replace('/', '-') }}"
+    content: ""
+    owner: root
+    group: root
+    mode: 0444
 - name: change ownership of kvm_machine home fs 
   file:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"

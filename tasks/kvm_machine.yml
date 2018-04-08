@@ -56,6 +56,10 @@
     - "{{ kvm_machine_uid|int(0, 10)+5 }}"
 - include_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
+- include_tasks: kvm_machine_backup.yml
+  vars:
+    kvm_machine_name: "{{ kvm_machine.name }}"
+  when: kvm_machine.deploy_to[inventory_hostname] == "backup"
 - include_tasks: exterminate_kvm_machine.yml
   vars:
     kvm_machine_name: "{{ kvm_machine.name }}"
