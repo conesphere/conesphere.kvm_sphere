@@ -82,20 +82,8 @@
   args:
     executable: /bin/bash
   when: kvm_zfs_kickoff_machine_result.changed
-- name: chk if image available
-  shell: |
-     zfs list "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" 
-  args:
-    executable: /bin/bash
-  register: kvm_check_image_available
-  changed_when: False
-  failed_when: False
 - name: download image 
-  include_tasks: kvm_image.yml
-  vars:
-    kvm_image_latest_version: "{{ kvm_machine.image_version }}"
-    kvm_image_name: "{{ kvm_machine.image }}"
-  when: kvm_check_image_available.rc != 0
+  import_tasks: kvm_image.yml
 - name: clone_vm_image
   shell: |
      zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk" 

@@ -1,5 +1,7 @@
 ---
 # this list creates hot standby for virtual machines 
+- name: download image 
+  import_tasks: kvm_image.yml
 - name: add machine user here 
   import_tasks: kvm_machine_add_user.yml
 - template:
