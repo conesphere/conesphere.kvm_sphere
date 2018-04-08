@@ -25,7 +25,7 @@ else
 	SEND_CMD="zfs send -R -I ${FS}@${SNAP}"
 fi
 
-zfs snap -r ${FS}@${SNAP} ; ${SEND_CMD} ${FS}@${NEW_SNAP} 
+zfs snap -r ${FS}@${NEW_SNAP} ; ${SEND_CMD} ${FS}@${NEW_SNAP} 
 # no compression makes debugging simpler 
 # | pigz -9 -c -
 
