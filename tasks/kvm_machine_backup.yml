@@ -1,3 +1,11 @@
 ---
 # this list creates hot standby for virtual machines 
+- name: add machine user here 
+  import_tasks: kvm_machine_add_user.yml
+- template:
+   dest: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+   src: templates/zfs-pull-cron.sh.j2
+   owner: root
+   group: root
+   mode: "0755"
 

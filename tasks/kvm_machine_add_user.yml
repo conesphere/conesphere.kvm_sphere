@@ -1,0 +1,24 @@
+---
+# adds user import 
+- group:
+    name: "{{ kvm_machine.name }}"
+    gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
+    state: "present"
+- user:
+    name: "{{ kvm_machine.name }}"
+    group: "{{ kvm_machine.name }}"
+    uid: "{{ kvm_machine_uid }}"
+    groups: "{{ ['kvm', kvm_machine.groups|default([])|join(',')]|join(',') }}"
+    state: "present"
+    createhome: "no"
+    shell: "/bin/bash"
+    home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
+    update_password: always
+  register: kvm_user_added
+# we need to restart udev again here because udev 
+# because the user was not available when we added it in 
+# the udef rule 
+- service:
+    name: udev
+    state: restarted
+  when: kvm_user_added.changed

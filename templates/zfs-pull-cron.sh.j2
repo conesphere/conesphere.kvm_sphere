@@ -5,7 +5,7 @@
 ssh-keygen -F {{ metal_name_to_ip[key]|default(key) }} 2>&1 >> /dev/null 
 if [[ $? != 0 ]] 
 then
-  ssh-keyscan -H {{ metal_name_to_ip[key]|default(key) }}  >> /root/.ssh/known_hosts 2> /dev/null
+  ssh-keyscan -H {{ metal_name_to_ip[key]|default(key) }}  >> ${HOME}/.ssh/known_hosts 2> /dev/null
 fi
 zfs-pull.sh root@{{ metal_name_to_ip[key]|default(key) }} {{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}
 {% endif %}
