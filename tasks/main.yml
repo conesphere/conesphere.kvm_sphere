@@ -98,7 +98,8 @@
   with_dict: "{{ kvm_firmware }}"
   loop_control:
     loop_var: kvm_firmware_cur
-- file: ssh directory
+- name: ssh directory
+  file:
     dest: /root/.ssh
     state: directory
     mode: "0700"
@@ -116,10 +117,11 @@
 - fetch:
     src: /root/.ssh/id_rsa.pub
     dest: "kvm_backup_ca/{{ inventory_hostname }}_rsa.pub"
+    flat: yes
 - copy:
     dest: kvm_backup_ca/ca_id_rsa
     mode: "0400"
-    content: "{{ lookup('passwordstore', kvm_backup_sshca_key) }}"
+    content: "{{ lookup('passwordstore', [kvm_backup_sshca_key, 'returnall=yes']|join(' ')) }}"
   delegate_to: localhost
 - name: Sign ssh_key
   shell: 'ssh-keygen -s kvm_backup_ca/ca_id_rsa -I "fetch_kvm_images" -V -1w:+8w -n root kvm_backup_ca/{{ inventory_hostname }}_rsa.pub'
@@ -143,7 +145,7 @@
     user: root
     state: present
     key_options: 'restrict,cert-authority,command="/usr/local/bin/zfs-pull-server-sshcmd.sh"'
-    key: "{{ lookup('passwordstore', kvm_backup_sshca_pub) }}"
+    key: "{{ lookup('passwordstore', [kvm_backup_sshca_pub, 'returnall=yes']|join(' ')) }}"
 - include_tasks: exterminate_kvm_machine.yml
   with_items: "{{ kvm_machine_exterminate }}"
   loop_control:
