@@ -1,4 +1,16 @@
 ---
+- name: test for backup file
+  stat:
+    path: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+  register: kvm_backup_job_exists
+- name: fetch a last copy of the image from old stable
+  block:
+    - shell: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+      when: "not kvm_dead_nodes[kvm_machine.name] is defined"
+    - file: 
+        dest: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+        state: absent
+  when: "kvm_backup_job_exists.stat.exists"
 - name: create home filesystem
   shell: |
      zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" 

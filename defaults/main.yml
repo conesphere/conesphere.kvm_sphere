@@ -10,6 +10,13 @@ kvm_image_root: "/kvm"
 kvm_image_downloads: "/root/downloads"
 kvm_firmware_root: "/etc/kvm_firmware"
 
+# kvm sshca password store path 
+kvm_backup_sshca_key: "cloud/please/configure"
+kvm_backup_sshca_pub: "{{ kvm_backup_sshca_key }}_pub"
+
+# this hash/dict keeps dead nodes to be able to skip fetch of last image to backup
+kvm_dead_nodes: {}
+
 # configure kvm acceleration by machine 
 kvm_machine_accel: {}
 

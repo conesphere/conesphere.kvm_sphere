@@ -98,6 +98,52 @@
   with_dict: "{{ kvm_firmware }}"
   loop_control:
     loop_var: kvm_firmware_cur
+- file: ssh directory
+    dest: /root/.ssh
+    state: directory
+    mode: "0700"
+    owner: root
+    group: root
+- name: Generate SSH keys
+  shell: ssh-keygen -b 4096 -t rsa -f /root/.ssh/id_rsa -q -N ""
+  args:
+    creates: /root/.ssh/id_rsa
+- file:
+    dest: kvm_backup_ca
+    state: directory
+    mode: "0700"
+  delegate_to: localhost
+- fetch:
+    src: /root/.ssh/id_rsa.pub
+    dest: "kvm_backup_ca/{{ inventory_hostname }}_rsa.pub"
+- copy:
+    dest: kvm_backup_ca/ca_id_rsa
+    mode: "0400"
+    content: "{{ lookup('passwordstore', kvm_backup_sshca_key) }}"
+  delegate_to: localhost
+- name: Sign ssh_key
+  shell: 'ssh-keygen -s kvm_backup_ca/ca_id_rsa -I "fetch_kvm_images" -V -1w:+8w -n root kvm_backup_ca/{{ inventory_hostname }}_rsa.pub'
+  args:
+    creates: "kvm_backup_ca/{{ inventory_hostname }}_rsa-cert.pub"
+  delegate_to: localhost
+- copy:
+    src: "kvm_backup_ca/{{ inventory_hostname }}_rsa-cert.pub"
+    dest: /root/.ssh/id_rsa-zfspull-cert.pub
+    owner: root
+    group: root
+    mode: "0440"
+- lineinfile:
+    path: /root/.ssh/config
+    regexp: '^CertificateFile /root/.ssh/id_rsa-zfspull-cert.pub'
+    insertbefore: BOF
+    create: yes
+    line: 'CertificateFile /root/.ssh/id_rsa-zfspull-cert.pub'
+- name: set ca for backup access 
+  authorized_key:
+    user: root
+    state: present
+    key_options: 'restrict,cert-authority,command="/usr/local/bin/zfs-pull-server-sshcmd.sh"'
+    key: "{{ lookup('passwordstore', kvm_backup_sshca_pub) }}"
 - include_tasks: exterminate_kvm_machine.yml
   with_items: "{{ kvm_machine_exterminate }}"
   loop_control:
