@@ -29,7 +29,7 @@
 - name: allow zfs pull export
   copy:
     # this is not a complete way to reverse engeneer systemd-escape bit it might hopefully do for most pathes 
-    dest: "/etc/zfs-pull-exports/{{ [kvm_zfs_filesystem, kvm_machine.name]|join('|')|regex_replace('^/', '')|regex_replace('-', '\\x2d')|regex_replace('/', '-') }}"
+    dest: "/etc/zfs-pull-exports/{{ [kvm_zfs_filesystem, kvm_machine.name]|join('/')|regex_replace('^/', '')|regex_replace('-', '\\x2d')|regex_replace('/', '-') }}"
     content: ""
     owner: root
     group: root

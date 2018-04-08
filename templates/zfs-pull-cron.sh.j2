@@ -1,6 +1,6 @@
 #!/bin/bash
 # periodicly pull a copy of a virtual machine from master to backup 
-{% for key in kvm_machine.deploy_to|keys() %}{% if kvm_machine['deploy_to'][key] == 'start' %}
+{% for key in kvm_machine.deploy_to.keys() %}{% if kvm_machine['deploy_to'][key] == 'start' %}
 # add host on sight (yes I know this is not the best thing to do)
 ssh-keygen -F {{ metal_name_to_ip[key]|default(key) }} 2>&1 >> /dev/null 
 if [[ $? != 0 ]] 
