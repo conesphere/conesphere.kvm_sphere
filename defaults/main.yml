@@ -123,6 +123,12 @@ kvm_images:
       chksum: 'sha256:d3746d2394f37a757a5a9157c692626ba8de8e48a8e7aed950f9656229b97f41'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
+  'CS_CentOS7.minimal_amd64.v0001':
+    'v0001':
+      url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0001.gz'
+      chksum: 'sha256:37adadb06f3bc84626fabefab9f5eb08b4fb73b731ad9d00a8ce037f2eeec745'
+      resize_type: debian_gpt_uefi
+      firmware: ovmf_2018022300
 
 
 kvm_machine_default_admin_port: 22
