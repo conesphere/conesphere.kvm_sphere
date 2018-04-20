@@ -139,7 +139,7 @@ kvm_images:
       firmware: ovmf_2018022300
     'v0002':
       url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0002.gz'
-      chksum: 'sha256:fbf3db6ccc6c335b1b99254870400984896e0d908d8a849b37feb6fcea879d28'
+      chksum: 'sha256:cc731bf6bf489dae08c1ab3bd2904b0a6a03f2d0dafebae8b032c19a41f9d4d5'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
 
