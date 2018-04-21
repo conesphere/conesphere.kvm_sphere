@@ -10,6 +10,13 @@ kvm_image_root: "/kvm"
 kvm_image_downloads: "/root/downloads"
 kvm_firmware_root: "/etc/kvm_firmware"
 
+# kvm sshca password store path 
+kvm_backup_sshca_key: "cloud/please/configure"
+kvm_backup_sshca_pub: "{{ kvm_backup_sshca_key }}_pub"
+
+# this hash/dict keeps dead nodes to be able to skip fetch of last image to backup
+kvm_dead_nodes: {}
+
 # configure kvm acceleration by machine 
 kvm_machine_accel: {}
 
@@ -88,6 +95,10 @@ kvm_machine_exterminate: []
 # a kickstart script then adds remote access and networking and cycles hostname and 
 # ssh keys 
 #
+# note that require must be a list of all the base versions that did lead to this 
+#  particular version in the right order. Best idea is to just jinja2 it together: 
+#   require: {{ kvm_images['foo']['version']['require'] + ['version'] }} 
+#
 kvm_images:
   'CS_Debian_Stretch_9.3.nesting_amd64':
     'v0001':
@@ -108,8 +119,9 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0004':
+      require: ['v0003']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3.nesting_uefi_amd64.v0004.gz'
-      chksum: 'sha256:1f12bb685876062be2cf739cac0a8e277677c7d550b64d8dcfbc976009950979'
+      chksum: 'sha256:c733124227331cefee8e21fd8c737653827f2840da80401127c45065cd7d49ec'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
   'CS_Debian_Stretch_9.3_uefi_amd64':
@@ -119,8 +131,20 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0003':
+      require: ['v0002']
       url: 'https://www.conesphere.com/kvmsphere/CS_Debian_Stretch_9.3_uefi_amd64.v0003.gz'
-      chksum: 'sha256:d3746d2394f37a757a5a9157c692626ba8de8e48a8e7aed950f9656229b97f41'
+      chksum: 'sha256:87406c926bec3e4dae5d93f1ce27dc760ba15300a3972288ad2dbfaf60f167c7'
+      resize_type: debian_gpt_uefi
+      firmware: ovmf_2018022300
+  'CS_CentOS7.minimal_amd64':
+    'v0001':
+      url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0001.gz'
+      chksum: 'sha256:37adadb06f3bc84626fabefab9f5eb08b4fb73b731ad9d00a8ce037f2eeec745'
+      resize_type: debian_gpt_uefi
+      firmware: ovmf_2018022300
+    'v0002':
+      url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0002.gz'
+      chksum: 'sha256:cc731bf6bf489dae08c1ab3bd2904b0a6a03f2d0dafebae8b032c19a41f9d4d5'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
   'CS_CentOS7.minimal_amd64':

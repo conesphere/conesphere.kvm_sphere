@@ -1,4 +1,16 @@
 ---
+- name: test for backup file
+  stat:
+    path: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+  register: kvm_backup_job_exists
+- name: fetch a last copy of the image from old stable
+  block:
+    - shell: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+      when: "not kvm_dead_nodes[kvm_machine.name] is defined"
+    - file: 
+        dest: "/etc/cron.hourly/vm-{{ kvm_machine.name }}-backup"
+        state: absent
+  when: "kvm_backup_job_exists.stat.exists"
 - name: create home filesystem
   shell: |
      zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}" 
@@ -12,29 +24,16 @@
   register: kvm_zfs_home_create_result
   failed_when: "kvm_zfs_home_create_result.rc != 42 and kvm_zfs_home_create_result.rc != 0"
   changed_when: "kvm_zfs_home_create_result.rc == 42"
-- group:
-    name: "{{ kvm_machine.name }}"
-    gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
-    state: "present"
-# todo: make additional usergroups configurable 
-- user:
-    name: "{{ kvm_machine.name }}"
-    group: "{{ kvm_machine.name }}"
-    uid: "{{ kvm_machine_uid }}"
-    groups: "{{ ['kvm', kvm_machine.groups|default([])|join(',')]|join(',') }}"
-    state: "present"
-    createhome: "no"
-    shell: "/bin/bash"
-    home: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
-    update_password: always
-  register: kvm_user_added
-# we need to restart udev again here because udev 
-# because the user was not available when we added it in 
-# the udef rule 
-- service:
-    name: udev
-    state: restarted
-  when: kvm_user_added.changed
+- name: add machine user here 
+  import_tasks: kvm_machine_add_user.yml
+- name: allow zfs pull export
+  copy:
+    # this is not a complete way to reverse engeneer systemd-escape bit it might hopefully do for most pathes 
+    dest: "/etc/zfs-pull-exports/{{ [kvm_zfs_filesystem, kvm_machine.name]|join('/')|regex_replace('^/', '')|regex_replace('-', '\\x2d')|regex_replace('/', '-') }}"
+    content: ""
+    owner: root
+    group: root
+    mode: 0444
 - name: change ownership of kvm_machine home fs 
   file:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}"
@@ -83,20 +82,8 @@
   args:
     executable: /bin/bash
   when: kvm_zfs_kickoff_machine_result.changed
-- name: chk if image available
-  shell: |
-     zfs list "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" 
-  args:
-    executable: /bin/bash
-  register: kvm_check_image_available
-  changed_when: False
-  failed_when: False
 - name: download image 
-  include_tasks: kvm_image_version.yml
-  vars:
-    kvm_image_version: "{{ kvm_machine.image_version }}"
-    kvm_image_name: "{{ kvm_machine.image }}"
-  when: kvm_check_image_available.rc != 0
+  import_tasks: kvm_image.yml
 - name: clone_vm_image
   shell: |
      zfs list "{{ kvm_zfs_filesystem }}/{{ kvm_machine.name }}/disk" 

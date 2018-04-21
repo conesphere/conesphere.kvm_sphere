@@ -4,7 +4,7 @@ allow {{ iface.name|default(iface) }}
 {# next one is to automatically add vxlan bridges as defined in network_interfaces role #}
 {% if 'vxlan' in network_interfaces %}
 {% for iface in network_interfaces.vxlan %}
-{% if iface.bridge is defined and iface.bridge == True %}allow {{ iface.name }}
+{% if iface.bridge is not defined or iface.bridge == True %}allow {{ iface.name }}
 {% endif %}
 {% endfor %}
-{% endif }
+{% endif %}

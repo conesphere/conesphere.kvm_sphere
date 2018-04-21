@@ -1,6 +1,25 @@
 ---
-- include_tasks: kvm_image_version.yml
-  with_dict: "{{ kvm_image.value }}"
-  loop_control:
-    loop_var: kvm_image_version
+- name: chk if image available
+  shell: |
+     zfs list "{{ kvm_image_zpool }}/{{ kvm_machine.image }}@{{ kvm_machine.image_version }}" 
+  args:
+    executable: /bin/bash
+  register: kvm_check_image_available
+  changed_when: False
+  failed_when: False
+- name: download image 
+  block:
+    - name: download requirements 
+      include_tasks: kvm_image_version.yml
+      loop_control:
+        loop_var: kvm_image_version
+      with_items: "{{ kvm_images[kvm_image_name][kvm_image_latest_version]['require']|default([]) }}"
+    - name: download real image
+      include_tasks: kvm_image_version.yml
+      vars:
+        kvm_image_version: "{{ kvm_image_latest_version }}"
+  vars:
+    kvm_image_latest_version: "{{ kvm_machine.image_version }}"
+    kvm_image_name: "{{ kvm_machine.image }}"
+  when: kvm_check_image_available.rc != 0
 
