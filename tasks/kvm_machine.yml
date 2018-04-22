@@ -57,12 +57,8 @@
 - include_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
 - include_tasks: kvm_machine_backup.yml
-  vars:
-    kvm_machine_name: "{{ kvm_machine.name }}"
   when: inventory_hostname in kvm_machine.deploy_to and kvm_machine.deploy_to[inventory_hostname] == "backup"
 - include_tasks: exterminate_kvm_machine.yml
-  vars:
-    kvm_machine_name: "{{ kvm_machine.name }}"
   when: inventory_hostname in kvm_machine.deploy_to and ( kvm_machine.deploy_to[inventory_hostname] == "drop" or kvm_machine.deploy_to[inventory_hostname] == "exterminate" )
 - include_tasks: kvm_machine_create.yml
   when: inventory_hostname in kvm_machine.deploy_to and kvm_machine.deploy_to[inventory_hostname] == "start"
