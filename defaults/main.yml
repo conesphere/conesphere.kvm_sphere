@@ -151,5 +151,11 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.100:443-cmd:netcat ftp.de.debian.org 443"
   - "tcp:10.0.2.101:80-cmd:netcat security.debian.org 80"
   - "tcp:10.0.2.101:443-cmd:netcat security.debian.org 443"
+  - "tcp:10.0.2.102:22-cmd:netcat github.com 22"
+  - "tcp:10.0.2.102:80-cmd:netcat github.com 80"
+  - "tcp:10.0.2.102:443-cmd:netcat github.com 443"
+  - "tcp:10.0.2.103:22-cmd:netcat gitlab.conesphere.com 22"
+  - "tcp:10.0.2.103:80-cmd:netcat gitlab.conesphere.com 80"
+  - "tcp:10.0.2.103:443-cmd:netcat gitlab.conesphere.com 443"
 
 kvm_guestfwd: "{{ kvm_default_guestfwd }}"

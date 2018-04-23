@@ -1,5 +1,12 @@
 ---
 # adds user import 
+- debug:
+    msg:
+      - "TAG_23"
+      - "For Host: {{ inventory_hostname }}"
+      - "Machine Name: {{ kvm_machine.name }}"
+      - "User GID: {{ kvm_machine.gid|default(kvm_machine_uid) }}"
+      - "User UID: {{ kvm_machine_uid }}"
 - group:
     name: "{{ kvm_machine.name }}"
     gid: "{{ kvm_machine.gid|default(kvm_machine_uid) }}"
