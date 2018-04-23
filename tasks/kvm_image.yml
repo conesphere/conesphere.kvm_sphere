@@ -15,7 +15,7 @@
         loop_var: kvm_image_version
       with_items: "{{ kvm_images[kvm_image_name][kvm_image_latest_version]['require']|default([]) }}"
     - name: download real image
-      include_tasks: kvm_image_version.yml
+      import_tasks: kvm_image_version.yml
       vars:
         kvm_image_version: "{{ kvm_image_latest_version }}"
   vars:
