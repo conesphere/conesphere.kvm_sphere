@@ -66,19 +66,19 @@
     - "{{ kvm_machine_uid|int(0, 10)+3 }}"
     - "{{ kvm_machine_uid|int(0, 10)+4 }}"
     - "{{ kvm_machine_uid|int(0, 10)+5 }}"
-- include_tasks: host_unknown.yml
+- import_tasks: host_unknown.yml
   when: "inventory_hostname not in kvm_machine.deploy_to"
-- include_tasks: kvm_machine_backup.yml
+- import_tasks: kvm_machine_backup.yml
   when: 
     - inventory_hostname in kvm_machine.deploy_to 
     - kvm_machine.deploy_to[inventory_hostname] == "backup"
-- include_tasks: exterminate_kvm_machine.yml
+- import_tasks: exterminate_kvm_machine.yml
   vars:
     kvm_machine_name: "{{ kvm_machine.name }}"
   when: 
     - inventory_hostname in kvm_machine.deploy_to
     - kvm_machine.deploy_to[inventory_hostname]["exterminate"] == 1 or  kvm_machine.deploy_to[inventory_hostname]["reinstall"] == 1
-- include_tasks: kvm_machine_create.yml
+- import_tasks: kvm_machine_create.yml
   when: 
     - inventory_hostname in kvm_machine.deploy_to
     - kvm_machine.deploy_to[inventory_hostname]['setup'] == 1
