@@ -160,7 +160,7 @@
    group: "{{ kvm_machine.name }}"
    mode: "0640"
 - import_tasks: "resize_{{ kvm_images[kvm_machine.image][kvm_machine.image_version]['resize_type'] }}.yml"
-  when: kvm_zfs_clone_machine_result.changed and resize_type in kvm_images[kvm_machine.image][kvm_machine.image_version]
+  when: kvm_zfs_clone_machine_result.changed and 'resize_type' in kvm_images[kvm_machine.image][kvm_machine.image_version]
 - copy:
    dest: "{{ kvm_image_root }}/{{ kvm_machine.name }}/{{ kvm_machine.name }}.status.enabled"
    content: ""
