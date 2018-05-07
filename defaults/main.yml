@@ -138,6 +138,7 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0002':
+      require: ['v0001']
       url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0002.gz'
       chksum: 'sha256:f39c820a3482a06035e55de4bbab3fd1b8fb67c37bbe1be363770abae3b60c8d'
       resize_type: debian_gpt_uefi
