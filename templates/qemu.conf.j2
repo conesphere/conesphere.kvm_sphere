@@ -22,7 +22,7 @@
 [fsdev "{{ filesystem.name }}"]
   fsdriver = "local"
   path = "{{ kvm_image_root }}/{{ kvm_machine.name }}/fs_{{ filesystem.name }}/"
-  security_model = "mapped"
+  security_model = "passthrough"
   readonly = "{{ filesystem.readonly|default('off') }}"
 
 [device]
