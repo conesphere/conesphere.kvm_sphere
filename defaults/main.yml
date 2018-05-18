@@ -166,7 +166,7 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.103:443-cmd:netcat gitlab.conesphere.com 443"
   - "tcp:10.0.2.104:80-cmd:netcat security-cdn.debian.org 80"
   - "tcp:10.0.2.104:443-cmd:netcat security-cdn.debian.org 443"
-  - "tcp:10.0.2.105:80-cmd:netcat storage.googleapis.com80"
+  - "tcp:10.0.2.105:80-cmd:netcat storage.googleapis.com 80"
   - "tcp:10.0.2.105:443-cmd:netcat storage.googleapis.com 443"
 
 
