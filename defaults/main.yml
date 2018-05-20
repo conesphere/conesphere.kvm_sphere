@@ -127,7 +127,12 @@ kvm_images:
       chksum: 'sha256:87406c926bec3e4dae5d93f1ce27dc760ba15300a3972288ad2dbfaf60f167c7'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
-
+  'CS_windows_netcafe_devel':
+    'v20180515':
+      url: 'https://www.conesphere.com/kvmsphere/CS_windows_netcafe_devel.20180515.gz'
+      chksum: 'sha256:bd90e624c243a94bab6f2a7a19e63fb42802708d46176d1e16f7eb68baa4c03b'
+      resize_type: debian_gpt_uefi
+      firmware: ovmf_2018022300
 
 kvm_machine_default_admin_port: 22
 
