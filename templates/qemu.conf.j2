@@ -68,7 +68,7 @@
 [machine]
   accel = "{{ kvm_machine_accel_cur }}"
   firmware = "{{ kvm_firmware_root }}/{{ kvm_machine_firmware_type }}.firmware"
-{% if 'windows_usb_passtrough' in kvm_machine  %}  type = "q35"
+{% if 'usb_passtrough' in kvm_machine  %}  type = "q35"
 {% endif %}
 {% if kvm_machine_graphics == False %}  graphics = "off"
 {% endif %}
