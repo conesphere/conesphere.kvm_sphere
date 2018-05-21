@@ -7,7 +7,7 @@
    mode: "0750"
 - name: "Download {{ kvm_image_name }} version {{ kvm_image_version }}"
   get_url:
-    tmp_dest: "{{ kvm_image_downloads }}/{{ kvm_image_name }}.{{ kvm_image_version }}.gz"
+    tmp_dest: "{{ kvm_image_downloads }}/"
     url: "{{ kvm_images[kvm_image_name][kvm_image_version]['url'] }}"
     checksum: "{{ kvm_images[kvm_image_name][kvm_image_version]['chksum'] }}"
     dest: "{{ kvm_image_downloads }}/{{ kvm_image_name }}.{{ kvm_image_version }}.gz"
