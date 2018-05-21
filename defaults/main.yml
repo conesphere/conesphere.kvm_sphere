@@ -147,12 +147,6 @@ kvm_images:
       chksum: 'sha256:37adadb06f3bc84626fabefab9f5eb08b4fb73b731ad9d00a8ce037f2eeec745'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
-  'CS_CentOS7.minimal_amd64':
-    'v0001':
-      url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0001.gz'
-      chksum: 'sha256:37adadb06f3bc84626fabefab9f5eb08b4fb73b731ad9d00a8ce037f2eeec745'
-      resize_type: debian_gpt_uefi
-      firmware: ovmf_2018022300
 
 
 kvm_machine_default_admin_port: 22
@@ -170,3 +164,25 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.103:443-cmd:netcat gitlab.conesphere.com 443"
 
 kvm_guestfwd: "{{ kvm_default_guestfwd }}"
+
+
+####################################################
+# configure more default variables
+# those are basicly needed to set up foo
+#
+# I nay have to rename this, but not for now 
+kvm_machine_image: 'CS_Debian_Stretch_9.3_uefi_amd64'
+kvm_machine_image_version: 'v0003'
+kvm_machine_image_volsize: '10G'
+kvm_machine_cpu: '2'
+kvm_machine_memory: '1000'
+kvm_machine_disks:
+  - name: swap
+    size: 5G
+
+kvm_machine_interfaces: []
+# kvm_machine_interfaces:
+#   - name: ens10
+#     host: internet
+
+ 

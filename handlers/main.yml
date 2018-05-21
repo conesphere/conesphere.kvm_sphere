@@ -14,10 +14,6 @@
     daemon_reload: yes
     name: tayga
 
-- name: rinetd_service_restart
-  systemd:
-    enabled: yes
-    state: restarted
-    daemon_reload: yes
-    name: rinetd
+- name: rinetd_conf_build
+  shell: "make -C /etc/rinetd"
 

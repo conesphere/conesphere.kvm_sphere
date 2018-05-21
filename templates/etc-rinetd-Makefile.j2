@@ -1,0 +1,10 @@
+#!/usr/bin/make
+
+../rinetd.conf: $(sort $(wildcard *.conf))
+	cat $^ > $@
+	systemctl restart rinetd
+
+all: ../rinetd.conf
+	/bin/true
+
+

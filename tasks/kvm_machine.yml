@@ -1,4 +1,18 @@
 ---
+# TODO: 
+# need machine dependend kvm zvol permissions file
+# - template:
+#    dest: /etc/udev/rules.d/kvm_sphere_zvol_permissions.rules
+#    src: templates/etc-udev-rules.d-kvm_sphere_zvol_permissions.rules.j2
+#    owner: root
+#    group: root
+#    mode: "0644"
+#   register: udev_zvol_permissions
+# - service:
+#     name: udev
+#     state: restarted
+#   when: udev_zvol_permissions.changed
+
 # test if kvm machine needs to be set up or shut down here
 - name: uid machine name checksum
   set_fact:

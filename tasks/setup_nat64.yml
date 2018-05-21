@@ -46,12 +46,26 @@
 - name: bring up tayga and iptables immidiately
   meta: flush_handlers
 - template:
-   dest: /etc/rinetd.conf
-   src: templates/etc-rinetd.conf.j2
+   dest: /etc/rinetd
+   state: directory
    owner: root
    group: root
    mode: "0755"
-  notify: rinetd_service_restart
+  notify: rinetd_conf_build
+- template:
+   dest: /etc/rinetd/Makefile
+   src: templates/etc-rinetd-Makefile.j2
+   owner: root
+   group: root
+   mode: "0644"
+  notify: rinetd_conf_build
+- template:
+   dest: /etc/rinetd/0_rinetd_header.conf
+   src: templates/etc-rinetd-0_rinetd_header.conf.j2
+   owner: root
+   group: root
+   mode: "0644"
+  notify: rinetd_conf_build
 - name: bring up tayga and iptables immidiately
   meta: flush_handlers
 
