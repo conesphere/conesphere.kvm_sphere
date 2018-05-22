@@ -172,6 +172,8 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.106:443-cmd:netcat hub.docker.com 443"
   - "tcp:10.0.2.107:80-cmd:netcat registry-1.docker.io 80"
   - "tcp:10.0.2.107:443-cmd:netcat registry-1.docker.io 443"
+  - "tcp:10.0.2.108:80-cmd:netcat auth.docker.io 80"
+  - "tcp:10.0.2.108:443-cmd:netcat auth.docker.io 443"
 
 
 
