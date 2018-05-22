@@ -174,6 +174,9 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.107:443-cmd:netcat registry-1.docker.io 443"
   - "tcp:10.0.2.108:80-cmd:netcat auth.docker.io 80"
   - "tcp:10.0.2.108:443-cmd:netcat auth.docker.io 443"
+  - "tcp:10.0.2.109:80-cmd:netcat production.cloudflare.docker.com 80"
+  - "tcp:10.0.2.109:443-cmd:netcat production.cloudflare.docker.com 443"
+
 
 
 
