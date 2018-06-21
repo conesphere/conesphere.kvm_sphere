@@ -178,6 +178,8 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.109:443-cmd:netcat production.cloudflare.docker.com 443"
   - "tcp:10.0.2.110:80-cmd:netcat pypi.python.org 80"
   - "tcp:10.0.2.110:443-cmd:netcat pypi.python.org 443"
+  - "tcp:10.0.2.111:80-cmd:netcat pypi.org 80"
+  - "tcp:10.0.2.111:443-cmd:netcat pypi.org 443"
 
 
 
