@@ -138,8 +138,15 @@ kvm_images:
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
     'v0002':
+      require: ['v0001']
       url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0002.gz'
-      chksum: 'sha256:37adadb06f3bc84626fabefab9f5eb08b4fb73b731ad9d00a8ce037f2eeec745'
+      chksum: 'sha256:f39c820a3482a06035e55de4bbab3fd1b8fb67c37bbe1be363770abae3b60c8d'
+      resize_type: debian_gpt_uefi
+      firmware: ovmf_2018022300
+    'v0003':
+      require: ['v0002']
+      url: 'https://www.conesphere.com/kvmsphere/CS_CentOS7.minimal_amd64.v0003.gz'
+      chksum: 'sha256:456a991925a2b0f79c467b41d695ae0ce1b9caed1e732dc4353f31bac6179fd8'
       resize_type: debian_gpt_uefi
       firmware: ovmf_2018022300
 
@@ -157,5 +164,26 @@ kvm_default_guestfwd:
   - "tcp:10.0.2.103:22-cmd:netcat gitlab.conesphere.com 22"
   - "tcp:10.0.2.103:80-cmd:netcat gitlab.conesphere.com 80"
   - "tcp:10.0.2.103:443-cmd:netcat gitlab.conesphere.com 443"
+  - "tcp:10.0.2.104:80-cmd:netcat security-cdn.debian.org 80"
+  - "tcp:10.0.2.104:443-cmd:netcat security-cdn.debian.org 443"
+  - "tcp:10.0.2.105:80-cmd:netcat storage.googleapis.com 80"
+  - "tcp:10.0.2.105:443-cmd:netcat storage.googleapis.com 443"
+  - "tcp:10.0.2.106:80-cmd:netcat hub.docker.com 80"
+  - "tcp:10.0.2.106:443-cmd:netcat hub.docker.com 443"
+  - "tcp:10.0.2.107:80-cmd:netcat registry-1.docker.io 80"
+  - "tcp:10.0.2.107:443-cmd:netcat registry-1.docker.io 443"
+  - "tcp:10.0.2.108:80-cmd:netcat auth.docker.io 80"
+  - "tcp:10.0.2.108:443-cmd:netcat auth.docker.io 443"
+  - "tcp:10.0.2.109:80-cmd:netcat production.cloudflare.docker.com 80"
+  - "tcp:10.0.2.109:443-cmd:netcat production.cloudflare.docker.com 443"
+  - "tcp:10.0.2.110:80-cmd:netcat pypi.python.org 80"
+  - "tcp:10.0.2.110:443-cmd:netcat pypi.python.org 443"
+  - "tcp:10.0.2.111:80-cmd:netcat pypi.org 80"
+  - "tcp:10.0.2.111:443-cmd:netcat pypi.org 443"
+  - "tcp:10.0.2.112:80-cmd:netcat files.pythonhosted.org 80"
+  - "tcp:10.0.2.112:443-cmd:netcat files.pythonhosted.org 443"
+
+
+
 
 kvm_guestfwd: "{{ kvm_default_guestfwd }}"
